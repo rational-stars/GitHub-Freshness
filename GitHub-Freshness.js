@@ -45,7 +45,7 @@
         attributeFilter: ['data-color-mode']
     });
 
-    let isHighlighting = false;  // 防止重复触发
+    let isHighlighting = false; // 防止重复触发
     let currentURL = location.href;
 
     // === 创建设置面板 ===
@@ -65,20 +65,20 @@
             <h4>亮色模式颜色设置</h4>
             <label for="highlightColorLight">背景色（小于指定时间范围）:</label>
             <input type="color" id="highlightColorLight" value="${HIGHLIGHT_COLOR_LIGHT}" /><br><br>
-            
+
             <label for="greyColorLight">背景色（大于指定时间范围）:</label>
             <input type="color" id="greyColorLight" value="${GREY_COLOR_LIGHT}" /><br><br>
-            
+
             <h4>暗色模式颜色设置</h4>
             <label for="highlightColorDark">背景色（小于指定时间范围）:</label>
             <input type="color" id="highlightColorDark" value="${HIGHLIGHT_COLOR_DARK}" /><br><br>
-            
+
             <label for="greyColorDark">背景色（大于指定时间范围）:</label>
             <input type="color" id="greyColorDark" value="${GREY_COLOR_DARK}" /><br><br>
-            
+
             <label for="timeThresholdMonths">时间阈值（月）:</label>
             <input type="number" id="timeThresholdMonths" value="${TIME_THRESHOLD_MONTHS}" min="1" /><br><br>
-            
+
             <button id="saveSettings">保存设置</button>
         `;
 
@@ -114,8 +114,8 @@
 
     // === 核心函数 ===
     function highlightDates() {
-        if (isHighlighting) return;  // 防止重复执行
-        isHighlighting = true;  // 设置标志为正在执行
+        if (isHighlighting) return; // 防止重复执行
+        isHighlighting = true; // 设置标志为正在执行
 
         const now = new Date();
         const elements = document.querySelectorAll('.sc-aXZVg');
@@ -146,7 +146,7 @@
             }
         });
 
-        isHighlighting = false;  // 执行完毕，重置标志
+        isHighlighting = false; // 执行完毕，重置标志
     }
 
     // === URL 更新后的逻辑 ===
@@ -204,7 +204,7 @@
         if (!isScrolling) {
             isScrolling = true;
             setTimeout(() => {
-                isScrolling = false;  // 滚动结束后重新允许触发
+                isScrolling = false; // 滚动结束后重新允许触发
             }, 100);
         }
     });
