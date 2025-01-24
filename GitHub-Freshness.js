@@ -14,9 +14,36 @@
     'use strict';
 
     // === 配置项 ===
-    let HIGHLIGHT_COLOR = GM_getValue('highlightColor', '#82de82'); // 小于指定时间范围的背景色
-    let GREY_COLOR = GM_getValue('greyColor', '#e3d711'); // 大于指定时间范围的背景色
+    let HIGHLIGHT_COLOR_LIGHT = GM_getValue('highlightColorLight', '#82de82'); // 亮色模式下小于指定时间范围的背景色
+    let GREY_COLOR_LIGHT = GM_getValue('greyColorLight', '#e3d711'); // 亮色模式下大于指定时间范围的背景色
+    let HIGHLIGHT_COLOR_DARK = GM_getValue('highlightColorDark', '#000957'); // 暗色模式下小于指定时间范围的背景色
+    let GREY_COLOR_DARK = GM_getValue('greyColorDark', '#2A004E'); // 暗色模式下大于指定时间范围的背景色
     let TIME_THRESHOLD_MONTHS = GM_getValue('timeThresholdMonths', 2); // 时间阈值（月）
+
+    // 当前模式的颜色
+    function isDarkMode() {
+        const htmlElement = document.documentElement;
+        return htmlElement.getAttribute('data-color-mode') === 'dark';
+    }
+
+    let HIGHLIGHT_COLOR = isDarkMode() ? HIGHLIGHT_COLOR_DARK : HIGHLIGHT_COLOR_LIGHT;
+    let GREY_COLOR = isDarkMode() ? GREY_COLOR_DARK : GREY_COLOR_LIGHT;
+
+    // 监听暗黑模式变化
+    const darkModeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'data-color-mode') {
+                HIGHLIGHT_COLOR = isDarkMode() ? HIGHLIGHT_COLOR_DARK : HIGHLIGHT_COLOR_LIGHT;
+                GREY_COLOR = isDarkMode() ? GREY_COLOR_DARK : GREY_COLOR_LIGHT;
+                highlightDates(); // 重新应用颜色
+            }
+        });
+    });
+
+    darkModeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-color-mode']
+    });
 
     let isHighlighting = false;  // 防止重复触发
     let currentURL = location.href;
@@ -35,15 +62,23 @@
 
         panel.innerHTML = `
             <h3>GitHub Freshness 设置</h3>
-            <label for="highlightColor">背景色（小于指定时间范围）:</label>
-            <input type="color" id="highlightColor" value="${HIGHLIGHT_COLOR}" /><br><br>
-
-            <label for="greyColor">背景色（大于指定时间范围）:</label>
-            <input type="color" id="greyColor" value="${GREY_COLOR}" /><br><br>
-
+            <h4>亮色模式颜色设置</h4>
+            <label for="highlightColorLight">背景色（小于指定时间范围）:</label>
+            <input type="color" id="highlightColorLight" value="${HIGHLIGHT_COLOR_LIGHT}" /><br><br>
+            
+            <label for="greyColorLight">背景色（大于指定时间范围）:</label>
+            <input type="color" id="greyColorLight" value="${GREY_COLOR_LIGHT}" /><br><br>
+            
+            <h4>暗色模式颜色设置</h4>
+            <label for="highlightColorDark">背景色（小于指定时间范围）:</label>
+            <input type="color" id="highlightColorDark" value="${HIGHLIGHT_COLOR_DARK}" /><br><br>
+            
+            <label for="greyColorDark">背景色（大于指定时间范围）:</label>
+            <input type="color" id="greyColorDark" value="${GREY_COLOR_DARK}" /><br><br>
+            
             <label for="timeThresholdMonths">时间阈值（月）:</label>
             <input type="number" id="timeThresholdMonths" value="${TIME_THRESHOLD_MONTHS}" min="1" /><br><br>
-
+            
             <button id="saveSettings">保存设置</button>
         `;
 
@@ -52,19 +87,27 @@
         // 保存设置
         document.getElementById('saveSettings').addEventListener('click', () => {
             // 获取设置并保存
-            HIGHLIGHT_COLOR = document.getElementById('highlightColor').value;
-            GREY_COLOR = document.getElementById('greyColor').value;
+            HIGHLIGHT_COLOR_LIGHT = document.getElementById('highlightColorLight').value;
+            GREY_COLOR_LIGHT = document.getElementById('greyColorLight').value;
+            HIGHLIGHT_COLOR_DARK = document.getElementById('highlightColorDark').value;
+            GREY_COLOR_DARK = document.getElementById('greyColorDark').value;
             TIME_THRESHOLD_MONTHS = parseInt(document.getElementById('timeThresholdMonths').value, 10);
 
+            // 更新当前使用的颜色
+            HIGHLIGHT_COLOR = isDarkMode() ? HIGHLIGHT_COLOR_DARK : HIGHLIGHT_COLOR_LIGHT;
+            GREY_COLOR = isDarkMode() ? GREY_COLOR_DARK : GREY_COLOR_LIGHT;
+
             // 保存到油猴存储
-            GM_setValue('highlightColor', HIGHLIGHT_COLOR);
-            GM_setValue('greyColor', GREY_COLOR);
+            GM_setValue('highlightColorLight', HIGHLIGHT_COLOR_LIGHT);
+            GM_setValue('greyColorLight', GREY_COLOR_LIGHT);
+            GM_setValue('highlightColorDark', HIGHLIGHT_COLOR_DARK);
+            GM_setValue('greyColorDark', GREY_COLOR_DARK);
             GM_setValue('timeThresholdMonths', TIME_THRESHOLD_MONTHS);
 
             // 隐藏设置面板
             panel.style.display = 'none';
 
-            // 应用新的设置，立即执行高亮
+            // 应用新的设置
             highlightDates();
         });
     }
