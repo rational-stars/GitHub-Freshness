@@ -1,12 +1,48 @@
 # GitHub-Freshness
 
-祝大家新年快乐
+### 感谢以下用户提出宝贵意见![](https://cloud.rational-stars.top/file/1737871487056.png)
 
-1.0.1更新预览 还会稍作调整 概览如下
+版本更新日志： v1.0.1 - 2025年2月14日
 
-![](https://cloud.rational-stars.top/file/1737870847999.png)
+## 🌟 **新增功能**：
 
-感谢以下用户提出宝贵意见![](https://cloud.rational-stars.top/file/1737871487056.png)
+- **全新 UI 与逻辑**：
+  - 彻底重构了旧版界面，提供更流畅、更直观的用户体验。
+
+- **搜索界面优化**：
+  - 现在在 GitHub 搜索界面也能享受高亮背景色和字体设置，带来更加舒适的浏览体验。
+
+- **深色主题适配**：
+  - 新增深色主题支持，可以自由切换浅色和深色主题，带来更丰富的视觉体验。
+  - 引入主题自动切换功能，无需再为主题选择烦恼，设置中可启用自动切换。
+
+- **时间阈值设置**：
+  - 允许用户根据需求自定义时间阈值，支持选择单位为日、周、月或年，使项目展示更符合个人节奏。
+
+- **文件夹颜色设置**：
+  - 新增文件夹颜色功能开关，赋予 GitHub 页面更多个性化。
+  - 现在可以自定义文件夹的高亮和灰色颜色，确保文件夹展示更加醒目。
+
+- **时间格式化设置**：
+  - 新增时间格式化开关，方便用户根据需求调整显示的时间格式，提升可读性。
+
+- **当前主题设置**：
+  - 在设置中自由选择当前主题：自动、浅色或深色主题，让 GitHub 的体验更加符合你的个人风格。
+
+- **待开发项目功能**：
+  - **awesome-xxx 项目功能待开发**，我们正在积极开发这一功能，敬请期待！
+
+---
+
+🎉 快来体验这些全新功能，让你的 GitHub 使用体验更加个性化、便捷与舒适！
+
+# 预览效果图
+
+https://cloud.rational-stars.top/file/1739503803391.png
+
+![img](https://cloud.rational-stars.top/file/1739503803391.png)
+
+![img](https://cloud.rational-stars.top/file/1739503710202.png)
 
 # **背景：**
 
@@ -15,8 +51,6 @@
 # **介绍：**
 
 **GitHub Freshness** 是一个油猴脚本，通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。你可以通过设置面板来自定义颜色，并根据仓库的更新时间，轻松识别哪些项目仍在维护，哪些已经被遗弃。再也不用浪费时间在过时的项目上，寻找最新更新、活跃的资源更加高效！本项目脚本代码[开源地址](https://github.com/rational-stars/GitHub-Freshness)：https://github.com/rational-stars/GitHub-Freshness
-
-
 
 使用教程
 
@@ -32,13 +66,7 @@
 
 
 
-![img](https://cloud.rational-stars.top/file/1737448681901.png)
-
-
-
-# 预览效果图
-
-![img](https://cloud.rational-stars.top/file/1737506329660.png)
+![img](https://cloud.rational-stars.top/file/1739503908673.png)
 
 # 🔔 声明
 

@@ -1,182 +1,639 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      0.0.1
+// @version      1.0.1
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
-// @author       向前  https://rational-stars.top/
-// @match        https://github.com/*
+// @author       向前  https://home.rational-stars.top/
+// @license      MIT
+// @icon         https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg
+// @match        https://github.com/*/*
+// @match        https://github.com/*/*?*
+// @match        https://github.com/search?*
+// @match        https://github.com/*/*/tree/*/*
+// @exclude      https://github.com/*/*/*/*  /* 继续排除更深层级的路径 */
+// @exclude      https://github.com/*/*/*/*?*
+// @require      https://code.jquery.com/jquery-3.6.0.min.js
+// @require      https://cdn.jsdelivr.net/npm/sweetalert2@11
+// @require      https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js
+// @require      https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_addStyle
 // ==/UserScript==
 
-(function () {
-    'use strict';
+; (function () {
+    // 引入 Luxon
+    const DateTime = luxon.DateTime
+        // 解析日期（指定格式和时区）
+        ; ('use strict')
+    // 引入 Pickr CSS
+    GM_addStyle(
+        `@import url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/monolith.min.css');`
+    )
+    GM_addStyle(`
 
+        .swal2-popup.swal2-modal.swal2-show{
+        color: #FFF;
+        border-radius: 20px;
+        background: #31b96c;
+        box-shadow:  8px 8px 16px #217e49,
+        -8px -8px 16px #41f48f;
+        #swal2-title a{
+        display: inline-block;
+        height: 40px;
+        margin-right: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+        color: #fff;
+        }
+        #swal2-title {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        }
+        .row-box select {
+        border:unset;
+        border-radius: .15em;
+        }
+        .row-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 25px;
+        }
+        .row-box .swal2-input {
+        height: 40px;
+        }
+        .row-box label {
+        margin-right: 10px;
+        }
+        .row-box main {
+        display: flex;
+        align-items: center;
+        }
+        .row-box main input{
+        width: 70px;
+        border: unset;
+        box-shadow: unset;
+        text-align: right;
+        margin:0;
+        }
+    `)
+    const PanelDom = `
+            <div class="row-box">
+                <label for="rpcPort">主题设置:</label>
+                <main>
+                    <select tabindex="-1" id="THEME-select" class="swal2-input">
+                        <option value="light">light</option>
+                        <option value="dark">dark</option>
+                    </select>
+                </main>
+            </div>
+            <div class="row-box">
+                <div>
+                    <label id="BGC-label">背景颜色:</label>
+                    <input type="checkbox" id="BGC-enabled">
+                </div>
+                <main>
+                    <span id="BGC-highlight-color-value">
+                        <div id="BGC-highlight-color-pickr"></div>
+                    </span>
+                    <span id="BGC-grey-color-value">
+                        <div id="BGC-grey-color-pickr"></div>
+                    </span>
+                </main>
+            </div>
+
+            <div class="row-box">
+                <label id="TIME_BOUNDARY-label" for="rpcPort">时间阈值:</label>
+                <main>
+                    <input id="TIME_BOUNDARY-number" type="text" class="swal2-input" value="" maxlength="3" pattern="\d{1,3}">
+                    <select tabindex="-1" id="TIME_BOUNDARY-select" class="swal2-input">
+                        <option value="day">日</option>
+                        <option value="week">周</option>
+                        <option value="month">月</option>
+                        <option value="year">年</option>
+                    </select>
+                </main>
+            </div>
+
+
+            <div class="row-box">
+                <div>
+                    <label id="FONT-label">字体颜色:</label>
+                    <input type="checkbox" id="FONT-enabled">
+                </div>
+                <main>
+                    <span id="FONT-highlight-color-value">
+                        <div id="FONT-highlight-color-pickr"></div>
+                    </span>
+                    <span id="FONT-grey-color-value">
+                        <div id="FONT-grey-color-pickr"></div>
+                    </span>
+                </main>
+            </div>
+
+            <div class="row-box">
+                <div>
+                    <label id="DIR-label">文件夹颜色:</label>
+                    <input type="checkbox" id="DIR-enabled">
+                </div>
+                <main>
+                    <span id="DIR-highlight-color-value">
+                        <div id="DIR-highlight-color-pickr"></div>
+                    </span>
+                    <span id="DIR-grey-color-value">
+                        <div id="DIR-grey-color-pickr"></div>
+                    </span>
+                </main>
+            </div>
+            <div class="row-box">
+                <div>
+                    <label id="TIME_FORMAT-label">时间格式化:</label>
+                    <input type="checkbox" id="TIME_FORMAT-enabled">
+                </div>
+            </div>
+            <div class="row-box">
+                <div>
+                    <label id="AWESOME-label" style="text-decoration: line-through;">awesome-xxx项目待开发:</label>
+                    <input type="checkbox" id="AWESOME-enabled">
+                </div>
+            </div>
+
+            <div class="row-box">
+                <label for="rpcPort">当前主题:</label>
+                <main>
+                    <select tabindex="-1" id="CURRENT_THEME-select" class="swal2-input">
+                        <option value="auto">auto</option>
+                        <option value="light">light</option>
+                        <option value="dark">dark</option>
+                    </select>
+                </main>
+            </div>
+
+        `
     // === 配置项 ===
-    let HIGHLIGHT_COLOR = GM_getValue('highlightColor', '#82de82'); // 小于指定时间范围的背景色
-    let GREY_COLOR = GM_getValue('greyColor', '#e3d711'); // 大于指定时间范围的背景色
-    let TIME_THRESHOLD_MONTHS = GM_getValue('timeThresholdMonths', 2); // 时间阈值（月）
+    let default_THEME = {
+        BGC: {
+            highlightColor: 'rgba(15, 172, 83, 1)', // 高亮背景色（例如：绿色）
+            greyColor: 'rgba(245, 245, 245, 1)', // 灰色背景色（例如：浅灰）
+            isEnabled: true, // 是否启用背景色功能
+        },
+        TIME_BOUNDARY: {
+            number: 30, // 时间阈值（单位：天、周、月、年中的某个值）
+            select: 'day', // 选择单位：'day'（天）, 'week'（周）, 'month'（月）, 'year'（年）
+        },
+        FONT: {
+            highlightColor: 'rgba(252, 252, 252, 1)', // 文字高亮颜色（例如：白色）
+            greyColor: 'rgba(0, 0, 0, 1)', // 字体颜色（例如：标准黑色）
+            isEnabled: true, // 是否启用字体颜色功能
+        },
+        DIR: {
+            highlightColor: 'rgba(15, 172, 83, 1)', // 文件夹高亮颜色（例如：绿色）
+            greyColor: 'rgba(154, 154, 154, 1)', // 文件夹灰色（例如：浅灰）
+            isEnabled: true, // 是否启用文件夹颜色功能
+        },
+        AWESOME: {
+            // 待开发的 awesome-xxx 项目
+            highlightColor: '#1E90FF', // 高亮颜色（例如：道奇蓝）
+            greyColor: '#696969', // 灰色（例如：暗灰）
+            isEnabled: true, // 是否启用这个功能
+        },
+        TIME_FORMAT: {
+            isEnabled: true, // 是否启用时间格式化功能
+        },
+    }
+    let CURRENT_THEME = GM_getValue('CURRENT_THEME', 'light')
+    let THEME_TYPE = getThemeType()
+    function getThemeType() {
+        let themeType = CURRENT_THEME
+        if (CURRENT_THEME === 'auto') {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                console.log('系统切换到深色模式 🌙')
+                themeType = 'dark'
+            } else {
+                console.log('系统切换到浅色模式 ☀️')
+                themeType = 'light'
+            }
+        }
+        return themeType
+    }
 
-    let isHighlighting = false;  // 防止重复触发
-    let currentURL = location.href;
+    const config_JSON = JSON.parse(
+        GM_getValue('config_JSON', JSON.stringify({ light: default_THEME }))
+    )
+    let THEME = config_JSON[THEME_TYPE] // 当前主题
 
+    const configPickr = {
+        theme: 'monolith', // 使用经典主题
+        components: {
+            preview: true,
+            opacity: true,
+            hue: true,
+            interaction: {
+                rgba: true,
+                // hex: true,
+                // hsla: true,
+                // hsva: true,
+                // cmyk: true,
+                input: true,
+                clear: true,
+                save: true,
+            },
+        },
+    }
+    function initPickr(el_default) {
+        const pickr = Pickr.create({ ...configPickr, ...el_default })
+        watchPickr(pickr)
+    }
+    function watchPickr(pickrName, el) {
+        pickrName.on('save', (color, instance) => {
+            pickrName.hide()
+        })
+    }
+
+    function successSwal() {
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: '设置已保存',
+            showConfirmButton: false,
+            timer: 800,
+        })
+    }
+    const preConfirm = () => {
+        // 遍历默认主题配置，更新设置
+        const updated_THEME = getUpdatedThemeConfig(default_THEME)
+        CURRENT_THEME = $('#CURRENT_THEME-select').val()
+        // 保存到油猴存储
+        GM_setValue(
+            'config_JSON',
+            JSON.stringify({
+                ...config_JSON,
+                [$('#THEME-select').val()]: updated_THEME,
+            })
+        )
+        GM_setValue('CURRENT_THEME', CURRENT_THEME)
+        THEME = updated_THEME // 更新当前主题
+        console.log('向前🇨🇳 ====> preConfirm ====> updated_THEME:', updated_THEME)
+        highlightDates(updated_THEME)
+        // successSwal()
+    }
+    function initSettings(theme) {
+        initPickr({
+            el: '#BGC-highlight-color-pickr',
+            default: theme.BGC.highlightColor,
+        })
+        initPickr({ el: '#BGC-grey-color-pickr', default: theme.BGC.greyColor })
+        initPickr({
+            el: '#FONT-highlight-color-pickr',
+            default: theme.FONT.highlightColor,
+        })
+        initPickr({ el: '#FONT-grey-color-pickr', default: theme.FONT.greyColor })
+        initPickr({
+            el: '#DIR-highlight-color-pickr',
+            default: theme.DIR.highlightColor,
+        })
+        initPickr({ el: '#DIR-grey-color-pickr', default: theme.DIR.greyColor })
+        $('#THEME-select').val(getThemeType())
+        $('#CURRENT_THEME-select').val(CURRENT_THEME)
+        handelData(theme)
+    }
+    function getUpdatedThemeConfig() {
+        // 创建一个新的对象，用于存储更新后的主题配置
+        let updatedTheme = {}
+
+        // 遍历默认主题配置，更新需要的键值
+        for (const [themeKey, themeVal] of Object.entries(default_THEME)) {
+            updatedTheme[themeKey] = {} // 创建每个主题键名的嵌套对象
+
+            for (let [key, val] of Object.entries(themeVal)) {
+                switch (key) {
+                    case 'highlightColor':
+                        // 获取高亮颜色（示例：金色、道奇蓝等）
+                        val = $(`#${themeKey}-highlight-color-value .pcr-button`).css(
+                            '--pcr-color'
+                        )
+                        break
+                    case 'greyColor':
+                        // 获取灰色调（示例：深灰、标准灰、暗灰等）
+                        val = $(`#${themeKey}-grey-color-value .pcr-button`).css(
+                            '--pcr-color'
+                        )
+                        break
+                    case 'isEnabled':
+                        // 判断该主题项是否启用
+                        val = $(`#${themeKey}-enabled`).prop('checked')
+                        break
+                    case 'number':
+                        // 获取时间阈值（示例：30）
+                        val = $(`#${themeKey}-number`).val()
+                        break
+                    case 'select':
+                        // 获取时间单位（可能的值："day", "week", "month"）
+                        val = $(`#${themeKey}-select`).val()
+                        break
+                    default:
+                        // 其他未定义的情况
+                        break
+                }
+
+                // 更新当前键名对应的值
+                updatedTheme[themeKey][key] = val
+            }
+        }
+
+        return updatedTheme
+    }
+    function handelData(theme) {
+        for (const [themeKey, themeVal] of Object.entries(theme)) {
+            for (const [key, val] of Object.entries(themeVal)) {
+                switch (key) {
+                    case 'highlightColor':
+                        $(`#${themeKey}-highlight-color-value .pcr-button`).css(
+                            '--pcr-color',
+                            val
+                        )
+                        break
+                    case 'greyColor':
+                        $(`#${themeKey}-grey-color-value .pcr-button`).css(
+                            '--pcr-color',
+                            val
+                        )
+                        break
+                    case 'isEnabled':
+                        $(`#${themeKey}-enabled`).prop('checked', val) // 选中
+                        break
+                    case 'number':
+                        $(`#${themeKey}-number`).val(val)
+                        break
+                    case 'select':
+                        $(`#${themeKey}-select`).val(val)
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+    }
     // === 创建设置面板 ===
     function createSettingsPanel() {
-        const panel = document.createElement('div');
-        panel.style.position = 'fixed';
-        panel.style.top = '10px';
-        panel.style.right = '10px';
-        panel.style.padding = '10px';
-        panel.style.backgroundColor = '#fff';
-        panel.style.border = '1px solid #ccc';
-        panel.style.zIndex = '9999';
-        panel.style.display = 'none'; // 初始隐藏面板
+        Swal.fire({
+            title: `<a target="_blank" tabindex="-1" id="swal2-title-div" href="https://home.rational-stars.top/"><img src="https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg" alt="向前" width="40"></a><a tabindex="-1" target="_blank" href="https://github.com/rational-stars/GitHub-Freshness">GitHub Freshness 设置</a>`,
+            html: PanelDom,
+            focusConfirm: false,
+            preConfirm,
+            showCancelButton: true,
+            cancelButtonText: '取消',
+            confirmButtonText: '保存设置',
+        })
 
-        panel.innerHTML = `
-            <h3>GitHub Freshness 设置</h3>
-            <label for="highlightColor">背景色（小于指定时间范围）:</label>
-            <input type="color" id="highlightColor" value="${HIGHLIGHT_COLOR}" /><br><br>
+        initSettings(THEME)
 
-            <label for="greyColor">背景色（大于指定时间范围）:</label>
-            <input type="color" id="greyColor" value="${GREY_COLOR}" /><br><br>
+        $('#THEME-select').on('change', function () {
+            let selectedTheme = $(this).val() // 获取选中的值
+            let theme = config_JSON[selectedTheme]
+            console.log('主题设置变更:', selectedTheme)
+            handelData(theme)
+        })
+    }
 
-            <label for="timeThresholdMonths">时间阈值（月）:</label>
-            <input type="number" id="timeThresholdMonths" value="${TIME_THRESHOLD_MONTHS}" min="1" /><br><br>
+    function handelTime(time, time_boundary, type = 'ISO8601') {
+        const { number, select } = time_boundary
+        let days = 0
+        // 根据 select 计算相应的天数
+        switch (select) {
+            case 'day':
+                days = number
+                break
+            case 'week':
+                days = number * 7
+                break
+            case 'month':
+                days = number * 30
+                break
+            case 'year':
+                days = number * 365
+                break
+            default:
+                console.warn('无效的时间单位:', select)
+                return false // 遇到无效单位直接返回 false
+        }
 
-            <button id="saveSettings">保存设置</button>
-        `;
-
-        document.body.appendChild(panel);
-
-        // 保存设置
-        document.getElementById('saveSettings').addEventListener('click', () => {
-            // 获取设置并保存
-            HIGHLIGHT_COLOR = document.getElementById('highlightColor').value;
-            GREY_COLOR = document.getElementById('greyColor').value;
-            TIME_THRESHOLD_MONTHS = parseInt(document.getElementById('timeThresholdMonths').value, 10);
-
-            // 保存到油猴存储
-            GM_setValue('highlightColor', HIGHLIGHT_COLOR);
-            GM_setValue('greyColor', GREY_COLOR);
-            GM_setValue('timeThresholdMonths', TIME_THRESHOLD_MONTHS);
-
-            // 隐藏设置面板
-            panel.style.display = 'none';
-
-            // 应用新的设置，立即执行高亮
-            highlightDates();
-        });
+        const now = new Date() // 当前时间
+        const targetDate = new Date(now) // 复制当前时间
+        targetDate.setDate(now.getDate() - days) // 计算指定时间范围的起点
+        let inputDate = new Date(time) // 传入的时间转换为 Date 对象
+        if (type === 'UTC') {
+            // 解析日期（指定格式和时区）
+            const dt = DateTime.fromFormat(time, "yyyy年M月d日 'GMT'Z HH:mm", {
+                zone: 'UTC',
+            }).setZone('Asia/Shanghai')
+            const formattedDate = dt.toJSDate()
+            inputDate = new Date(formattedDate)
+        }
+        return inputDate >= targetDate // 判断输入时间是否在 time_boundary 以内
     }
 
     // === 核心函数 ===
-    function highlightDates() {
-        if (isHighlighting) return;  // 防止重复执行
-        isHighlighting = true;  // 设置标志为正在执行
-
-        const now = new Date();
-        const elements = document.querySelectorAll('.sc-aXZVg');
+    function highlightDatesSearchPage(theme = THEME) {
+        const elements = $('.Text__StyledText-sc-17v1xeu-0.hWqAbU')
         if (elements.length === 0) {
-            console.log('没有找到日期元素');
-            isHighlighting = false;
-            return;
+            console.log('没有找到日期元素')
+            return
         }
+        // return
+        elements.each(function () {
+            const title = $(this).attr('title')
+            console.log('向前🇨🇳 ====> $(this):', $(this))
+            if (title) {
+                console.log('向前🇨🇳 ====> title:', title)
 
-        elements.forEach(element => {
-            const datetime = element.getAttribute('datetime');
-            if (datetime) {
-                const date = new Date(datetime);
-                const timeDiff = now - date;
-                const daysDiff = timeDiff / (1000 * 3600 * 24);
-                const monthsDiff = daysDiff / 30;
-
-                // 找到最近的祖先 td 元素
-                const tdElement = element.closest('td');
-                if (tdElement) {
-                    element.style.setProperty('color', '#fff', 'important');
-                    if (monthsDiff <= TIME_THRESHOLD_MONTHS) {
-                        tdElement.style.setProperty('background-color', HIGHLIGHT_COLOR, 'important');
+                const timeResult = handelTime(title, theme.TIME_BOUNDARY, 'UTC')
+                let themeType = getThemeType()
+                console.log('向前🇨🇳 ====> themeType:', themeType)
+                const BGC_element = $(this).closest(
+                    `.Box-sc-g0xbh4-0 .${themeType === 'dark' ? 'iwUbcA' : 'flszRz'}`
+                )
+                console.log('向前🇨🇳 ====> BGC_element:', BGC_element)
+                // 背景色
+                if (BGC_element.length && theme.BGC.isEnabled) {
+                    if (timeResult) {
+                        BGC_element.css('background-color', theme.BGC.highlightColor)
                     } else {
-                        tdElement.style.setProperty('background-color', GREY_COLOR, 'important');
+                        BGC_element.css('background-color', theme.BGC.greyColor)
+                    }
+                }
+                // 字体颜色
+                if (theme.FONT.isEnabled) {
+                    if (timeResult) {
+                        $(this).css('color', theme.FONT.highlightColor)
+                    } else {
+                        $(this).css('color', theme.FONT.greyColor)
+                    }
+                }
+                // 时间格式化
+                if (theme.TIME_FORMAT.isEnabled) {
+                    // 解析日期（指定格式和时区）
+                    const dt = DateTime.fromFormat(title, "yyyy年M月d日 'GMT'Z HH:mm", {
+                        zone: 'UTC',
+                    }).setZone('Asia/Shanghai')
+
+                    // 格式化成 YYYY-MM-DD
+                    const formattedDate = dt.toFormat('yyyy-MM-dd')
+                    $(this).text(formattedDate)
+                }
+            }
+        })
+    }
+    function highlightDates(theme = THEME) {
+        const matchUrl = isMatchedUrl()
+        if (!matchUrl) return
+        if (matchUrl === 'matchSearchPage') return highlightDatesSearchPage(theme)
+        const elements = $('.sc-aXZVg')
+        if (elements.length === 0) {
+            console.log('没有找到日期元素')
+            return
+        }
+        // return
+        elements.each(function () {
+            const datetime = $(this).attr('datetime')
+            if (datetime) {
+                const timeResult = handelTime(datetime, theme.TIME_BOUNDARY)
+                const trElement = $(this).closest('tr')
+                // 背景颜色和字体
+                const BGC_element = $(this).closest('td')
+                console.log('向前🇨🇳 ====> BGC_element:', BGC_element)
+                // 在 tr 元素中查找 SVG 元素
+                const DIR_element = trElement.find('.icon-directory')
+
+                // 背景色
+                if (BGC_element.length && theme.BGC.isEnabled) {
+                    if (timeResult) {
+                        BGC_element[0].style.setProperty(
+                            'background-color',
+                            theme.BGC.highlightColor,
+                            'important'
+                        )
+                    } else {
+                        BGC_element[0].style.setProperty(
+                            'background-color',
+                            theme.BGC.greyColor,
+                            'important'
+                        )
+                    }
+                }
+
+                // 文件夹颜色
+                if (DIR_element.length && theme.DIR.isEnabled) {
+                    if (timeResult) {
+                        DIR_element.attr('fill', theme.DIR.highlightColor)
+                    } else {
+                        DIR_element.attr('fill', theme.DIR.greyColor)
+                    }
+                }
+                // 时间格式化
+                if (theme.TIME_FORMAT.isEnabled && $(this).css('display') !== 'none') {
+                    $(this).css('display', 'none')
+                    const formattedDate = formatDate(datetime)
+                    $(this).before(`<span>${formattedDate}</span>`)
+                } else {
+                    $(this).parent().find('span').remove()
+                    $(this).css('display', 'block')
+                }
+                // 字体颜色
+                if (theme.FONT.isEnabled) {
+                    if (timeResult) {
+                        $(this).parent().css('color', theme.FONT.highlightColor)
+                    } else {
+                        $(this).parent().css('color', theme.FONT.greyColor)
                     }
                 }
             }
-        });
+        })
+    }
+    function formatDate(isoDateString) {
+        // 将 ISO 字符串转换为 Date 对象
+        const date = new Date(isoDateString)
 
-        isHighlighting = false;  // 执行完毕，重置标志
+        // 提取年、月、日
+        const year = date.getFullYear() // 获取年份
+        const month = String(date.getMonth() + 1).padStart(2, '0') // 获取月份（补零）
+        const day = String(date.getDate()).padStart(2, '0') // 获取日期（补零）
+
+        // 拼接为年月日格式
+        return `${year}-${month}-${day}`
+    }
+    function isMatchedUrl() {
+        const currentUrl = window.location.href
+
+        // 判断是否符合 @match 的 URL 模式
+        const matchRepoPage =
+            /^https:\/\/github\.com\/[^/]+\/[^/]+(?:\?.*)?$|^https:\/\/github\.com\/[^/]+\/[^/]+\/tree\/.+$/.test(
+                currentUrl
+            )
+        // 判断是否符合 @match 的 URL 模式
+        const matchSearchPage = /^https:\/\/github\.com\/search\?.*$/.test(
+            currentUrl
+        )
+        // 如果当前是仓库页面，返回变量名
+        if (matchRepoPage) return 'matchRepoPage'
+
+        // 如果当前是搜索页面，返回变量名
+        if (matchSearchPage) return 'matchSearchPage'
+
+        // 如果没有匹配，返回 null 或空字符串
+        return null
     }
 
-    // === URL 更新后的逻辑 ===
-    function onUrlChange() {
-        if (currentURL !== location.href) {
-            currentURL = location.href;
-            console.log('URL 发生变化:', currentURL);
+    function runScript() {
+        if (!isMatchedUrl()) return // 确保 URL 匹配，避免在不需要的页面运行
+        setTimeout(() => {
+            highlightDates()
+        }, 500)
+        console.log('✅ 脚本运行在:', window.location.href)
+    }
 
-            // 检查 URL 是否符合 https://github.com/*/*/tree/* 格式
-            const regex = /^https:\/\/github\.com\/[^/]+\/[^/]+\/tree\/[^/]+/;
-            if (regex.test(location.href)) {
-                console.log('符合 GitHub 目录树页面格式');
+    // **监听 GitHub PJAX 跳转**
+    document.addEventListener('pjax:end', runScript)
 
-                // 检查 code-tab 是否存在且包含 selected 类名
-                const codeTab = document.getElementById('code-tab');
-                if (codeTab && codeTab.classList.contains('selected')) {
-                    console.log('code-tab 存在并被选中，开始执行高亮代码');
-                    setTimeout(() => {
-                        highlightDates();
-                    }, 1000); // 延迟 1 秒，等待页面加载
-                } else {
-                    console.log('code-tab 不存在或未被选中，跳过高亮代码');
+    // **监听前进/后退**
+    window.addEventListener('popstate', () => setTimeout(runScript, 300))
+
+        // **拦截 pushState & replaceState**
+        ; (function (history) {
+            const originalPushState = history.pushState
+            const originalReplaceState = history.replaceState
+            function newHistoryMethod(method) {
+                return function () {
+                    const result = method.apply(this, arguments)
+                    setTimeout(runScript, 50)
+                    return result
                 }
-            } else {
-                console.log('不符合 GitHub 目录树页面格式，跳过高亮代码');
             }
-        }
-    }
 
-    // === 监听 URL 和 DOM 变化 ===
-    const observer = new MutationObserver(() => {
-        const codeTab = document.getElementById('code-tab');
-        if (codeTab && codeTab.classList.contains('selected')) {
-            highlightDates();
-        }
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-    });
-
-    setInterval(onUrlChange, 1000);
-
-    setTimeout(() => {
-        const codeTab = document.getElementById('code-tab');
-        if (codeTab && codeTab.classList.contains('selected')) {
-            highlightDates();
-        }
-    }, 1000);
-
-    // === 防止滚动时重复触发 ===
-    let isScrolling = false;
-    window.addEventListener('scroll', () => {
-        if (!isScrolling) {
-            isScrolling = true;
-            setTimeout(() => {
-                isScrolling = false;  // 滚动结束后重新允许触发
-            }, 100);
-        }
-    });
+            history.pushState = newHistoryMethod(originalPushState)
+            history.replaceState = newHistoryMethod(originalReplaceState)
+        })(window.history)
 
     // === 初始化设置面板 ===
-    createSettingsPanel();
+    // createSettingsPanel()
 
     // === 使用油猴菜单显示/隐藏设置面板 ===
-    GM_registerMenuCommand('⚙️ 设置面板', () => {
-        const panel = document.querySelector('div[style*="position: fixed"]');
-        if (panel) {
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-    });
-
-    // === 页面加载时自动执行高亮 ===
-    highlightDates(); // 确保在初始化时执行高亮逻辑
-})();
+    GM_registerMenuCommand('⚙️ 设置面板', createSettingsPanel)
+    // 监听主题变化
+    window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', (e) => {
+            if (e.matches) {
+                THEME = config_JSON['dark']
+                console.log('系统切换到深色模式 🌙')
+                highlightDates(THEME)
+            } else {
+                THEME = config_JSON['light']
+                console.log('系统切换到浅色模式 ☀️')
+                highlightDates(THEME)
+            }
+        })
+})()
