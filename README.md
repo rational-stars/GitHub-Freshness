@@ -1,11 +1,25 @@
 # GitHub-Freshness
-
+![image.png](https://cloud.rational-stars.top/file/1739870246994.png)
 ### 感谢以下用户提出宝贵意见![](https://cloud.rational-stars.top/file/1737871487056.png)
+## 🌟 **新增功能**：
+版本更新日志： v1.0.1 - 2025年2月18日
+- **文件排序**：
+  - 可以根据需求对文件进行排序，看项目的时间更快了呢。
+- **Awesome类型项目支持**：
+  - 现在Awesome项目可以在列表中直接展示该项目的 star 数量和最近更新日期。
+  - Awesome需要请求 github api。 GitHub 对未认证的用户（即没有使用令牌或授权的用户）对 API 请求数量设定了限制。如果你频繁地进行请求，会超出这个限制
+  解决方案：
+	1.	使用认证请求：
+	使用 个人访问令牌（Personal Access Token） 可以显著提高请求限制，未认证的用户每小时最大请求次数为 60 次，而认证的用户每小时最大请求次数为 5000 次。
+	2.  如何使用个人访问令牌：
+	1.登录 GitHub，访问 GitHub 个人访问令牌生成页面。https://github.com/settings/tokens
+	2.点击 Generate new token，选择适当的权限（你可以选择默认权限），然后生成一个新的令牌。
+	3.复制刚刚生成的令牌到GitHub-Freshness设置页面的--AWESOME项目--配置后面的输入框内并勾选复选框☑️就 OK 了。
+  4.[点击跳转到声明](#声明)
 
-版本更新日志： v1.0.1 - 2025年2月14日
 
 ## 🌟 **新增功能**：
-
+版本更新日志： v1.0.1 - 2025年2月14日
 - **全新 UI 与逻辑**：
   - 彻底重构了旧版界面，提供更流畅、更直观的用户体验。
 
@@ -38,8 +52,6 @@
 
 # 预览效果图
 
-https://cloud.rational-stars.top/file/1739503803391.png
-
 ![img](https://cloud.rational-stars.top/file/1739503803391.png)
 
 ![img](https://cloud.rational-stars.top/file/1739503710202.png)
@@ -68,7 +80,7 @@ https://cloud.rational-stars.top/file/1739503803391.png
 
 ![img](https://cloud.rational-stars.top/file/1739503908673.png)
 
-# 🔔 声明
+# 声明
 
 本脚本在任何支持油猴的浏览器皆可使用，并秉承「不作恶」的原则， 无需用户注册登录，不跟踪不记录任何用户信息，无需关注公众号，不添加广告。
 

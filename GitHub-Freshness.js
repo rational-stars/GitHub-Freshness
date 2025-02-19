@@ -188,7 +188,7 @@
                       <input id="AWESOME_TOKEN" type="password" class="swal2-input" value="">
                   </main>                  
               </div>
-            <p>当复选框切换到未勾选状态时，部分设置不会立即生效需重新刷新页面。AWESOME谨慎开启详细说明请看 <a target="_blank" href="https://rational-stars.top/archives/github"> 文档ℹ️</><p/>
+            <p>当复选框切换到未勾选状态时，部分设置不会立即生效需重新刷新页面。AWESOME谨慎开启详细说明请看 <a target="_blank" href="https://rational-stars.top/archives/GitHub-Freshness"> 文档ℹ️</><p/>
 
           `
   // === 配置项 ===
@@ -265,7 +265,12 @@
   }
   function initPickr(el_default) {
     const pickr = Pickr.create({ ...configPickr, ...el_default })
-    pickr.on('save', pickrName.hide())
+    watchPickr(pickr)
+  }
+  function watchPickr(pickrName, el) {
+    pickrName.on('save', (color, instance) => {
+      pickrName.hide()
+    })
   }
   const preConfirm = () => {
     // 遍历默认主题配置，更新设置
