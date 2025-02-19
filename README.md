@@ -14,7 +14,7 @@
 	2.  如何使用个人访问令牌：
 	1.登录 GitHub，访问 GitHub 个人访问令牌生成页面。https://github.com/settings/tokens
 	2.点击 Generate new token，选择适当的权限（你可以选择默认权限），然后生成一个新的令牌。
-	3.复制刚刚生成的令牌到GitHub-Freshness设置页面的--AWESOME项目--配置后面的输入框内并勾选复选框☑️就 OK 了。
+	3.复制刚刚生成的令牌到GitHub-Freshness设置页面的--AWESOME token--配置后面的输入框内并勾选复选框☑️就 OK 了。
   4.[点击跳转到声明](#声明)
 
 
