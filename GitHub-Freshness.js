@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      1.1.1
+// @version      1.1.2
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
 // @author       向前  https://home.rational-stars.top/
 // @license      MIT
@@ -181,7 +181,7 @@
 
               <div class="row-box">
                   <div>
-                      <label id="AWESOME-label">AWESOME项目:</label>
+                      <label id="AWESOME-label"><a target="_blank" href="https://github.com/settings/tokens">AWESOME token: </a></label>
                       <input type="checkbox" id="AWESOME-enabled">
                   </div>
                   <main>
@@ -290,7 +290,8 @@
     THEME = updated_THEME // 更新当前主题
     GitHub_Freshness(updated_THEME)
     Swal.fire({
-      position: 'top-end',
+      position: 'top-center',
+      background: '#4ab96f',
       icon: 'success',
       title: '设置已保存',
       showConfirmButton: false,
@@ -402,6 +403,7 @@
       html: PanelDom,
       focusConfirm: false,
       preConfirm,
+      heightAuto:false,
       showCancelButton: true,
       cancelButtonText: '取消',
       confirmButtonText: '保存设置',
@@ -585,7 +587,7 @@
               if (err.status === 403) {
                 Swal.fire({
                   position: 'top-center',
-                  icon: 'success',
+                  icon: 'warning',
                   title: '检测到AWESOME API 速率限制超出！',
                   confirmButtonText: '查看详情',
                   showConfirmButton: true,
@@ -626,10 +628,12 @@
         const BGC_element = $(this).closest('td')
         // 在 tr 元素中查找 SVG 元素
         const DIR_element = trElement.find('.icon-directory')
+        const FILE_element = trElement.find('.color-fg-muted')
         // 背景色
         setElementBGC(BGC_element, theme.BGC, timeResult)
-        // 文件夹颜色
-        setElementDIR(DIR_element, theme.TIME_FORMAT, timeResult)
+        // 文件夹颜色和文件图标
+        setElementDIR(DIR_element, theme.DIR, timeResult)
+        setElementDIR(FILE_element, theme.DIR, timeResult)
         // 时间格式化
         setElementTIME_FORMAT($(this), theme.TIME_FORMAT, datetime)
         // 字体颜色
