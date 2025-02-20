@@ -682,12 +682,19 @@
     return null
   }
 
-  function runScript() {
-    if (!isMatchedUrl()) return // 确保 URL 匹配，避免在不需要的页面运行
-    setTimeout(() => {
-      GitHub_Freshness()
-    }, 900)
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
   }
+  
+  const runScript = debounce(() => {
+    if (!isMatchedUrl()) return;
+    GitHub_Freshness();
+  }, 300);
+  
 
   // **监听 GitHub PJAX 跳转**
   document.addEventListener('pjax:end', runScript)
