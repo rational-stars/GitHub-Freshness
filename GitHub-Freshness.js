@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      1.1.2
+// @version      1.1.3
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
-// @author       向前  https://home.rational-stars.top/
+// @author       向前 https://docs.rational-stars.top/ https://github.com/rational-stars/GitHub-Freshness https://home.rational-stars.top/
 // @license      MIT
 // @icon         https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg
 // @match        https://github.com/*/*
@@ -188,7 +188,7 @@
                       <input id="AWESOME_TOKEN" type="password" class="swal2-input" value="">
                   </main>                  
               </div>
-            <p>当复选框切换到未勾选状态时，部分设置不会立即生效需重新刷新页面。AWESOME谨慎开启详细说明请看 <a target="_blank" href="https://rational-stars.top/archives/GitHub-Freshness"> 文档ℹ️</><p/>
+            <p>当复选框切换到未勾选状态时，部分设置不会立即生效需重新刷新页面。AWESOME谨慎开启详细说明请看 <a target="_blank" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html"> 文档ℹ️</><p/>
 
           `
   // === 配置项 ===
@@ -578,9 +578,9 @@
                 $(el.target).after(`<span class="stars" style="padding: 8px">★${stars}</span><span class="updated-at">📅${formatDate(time)}</span>`);
                 el.target.setAttribute('request', 'true')
               }
-              setElementBGC(el, theme.BGC, timeResult)
+              setElementBGC($(el.target), theme.BGC, timeResult)
               // 字体颜色
-              setElementFONT(el, theme.FONT, timeResult)
+              setElementFONT($(el.target), theme.FONT, timeResult)
               $(el.target).css('padding', '0 12px')
             },
             error: function (err) {
