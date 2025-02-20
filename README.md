@@ -1,9 +1,15 @@
 # 以下效果皆可在设置界面自定义 
 ![设置](./docs/img/setting.png)
 # 预览效果图
+# github 项目界面预览
 ![github 项目界面预览](./docs/img/project.png)
+
+# github 搜索界面预览
 ![github 搜索界面预览](./docs/img/serch.png)
+
+# github Awesome-xxx项目预览
 ![github Awesome-xxx项目预览](./docs/img/awesome-xxx.png)
+
 
 # **背景：**
 
