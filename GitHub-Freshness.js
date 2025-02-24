@@ -1,17 +1,14 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      1.1.3
+// @version      1.1.4
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
 // @author       向前 https://docs.rational-stars.top/ https://github.com/rational-stars/GitHub-Freshness https://home.rational-stars.top/
 // @license      MIT
 // @icon         https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg
 // @match        https://github.com/*/*
-// @match        https://github.com/*/*?*
 // @match        https://github.com/search?*
-// @match        https://github.com/*/*/tree/*/*
-// @exclude      https://github.com/*/*/*/*  /* 继续排除更深层级的路径 */
-// @exclude      https://github.com/*/*/*/*?*
+// @match        https://github.com/*/*/tree/*
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
 // @require      https://cdn.jsdelivr.net/npm/sweetalert2@11
 // @require      https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/pickr.min.js
@@ -403,7 +400,7 @@
       html: PanelDom,
       focusConfirm: false,
       preConfirm,
-      heightAuto:false,
+      heightAuto: false,
       showCancelButton: true,
       cancelButtonText: '取消',
       confirmButtonText: '保存设置',
@@ -439,10 +436,11 @@
   }
   function setElementTIME_FORMAT(el, TIME_FORMAT, datetime) {
     if (TIME_FORMAT.isEnabled && el.css('display') !== 'none') {
+      console.log("向前🇨🇳 ====> setElementTIME_FORMAT ====> display:")
       el.css('display', 'none')
       const formattedDate = formatDate(datetime)
       el.before(`<span>${formattedDate}</span>`)
-    } else {
+    } else if (TIME_FORMAT.isEnabled === false) {
       el.parent().find('span').remove()
       el.css('display', 'block')
     }
@@ -518,13 +516,12 @@
   // === 核心函数 ===
   function GitHub_FreshnessSearchPage(theme = THEME) {
     const elements = $('.Text__StyledText-sc-17v1xeu-0.hWqAbU')
-    if (elements.length === 0) return //console.log('没有找到日期元素')
+    if (elements.length === 0) return console.log('没有找到日期元素')
+    let themeType = getThemeType()
     elements.each(function () {
       const title = $(this).attr('title')
       if (title) {
         const timeResult = handelTime(title, theme.TIME_BOUNDARY, 'UTC')
-        let themeType = getThemeType()
-        console.log('向前🇨🇳 ====> themeType:', themeType)
         const BGC_element = $(this).closest(
           `.Box-sc-g0xbh4-0 .${themeType === 'dark' ? 'iwUbcA' : 'flszRz'}`
         )
@@ -612,11 +609,14 @@
 
   }
   function GitHub_Freshness(theme = THEME) {
+    console.log("向前🇨🇳 ====> GitHub_Freshness ====> GitHub_Freshness:")
     const matchUrl = isMatchedUrl()
     if (!matchUrl) return
     if (matchUrl === 'matchSearchPage') return GitHub_FreshnessSearchPage(theme)
     const elements = $('.sc-aXZVg')
-    if (elements.length === 0) return console.log('没有找到日期元素')
+    if (elements.length === 0) return console.log('没有找到日期元素', setTimeout(runScript, 350));
+    console.log("向前🇨🇳 ====> GitHub_Freshness ====> elements:", elements.length)
+
     let trRows = []
     elements.each(function () {
       const datetime = $(this).attr('datetime')
@@ -689,34 +689,52 @@
       timeout = setTimeout(() => func.apply(this, args), wait);
     };
   }
-  
+
   const runScript = debounce(() => {
     if (!isMatchedUrl()) return;
-    GitHub_Freshness();
-  }, 300);
-  
+    GitHub_Freshness();  // 页面内容加载完成后执行
+  }, 350);  // 设置合适的延迟，避免频繁执行
 
-  // **监听 GitHub PJAX 跳转**
-  document.addEventListener('pjax:end', runScript)
+  (function (history) {
+    // 保存原始的 pushState 和 replaceState 方法
+    const pushState = history.pushState;
+    const replaceState = history.replaceState;
 
-  // **监听前进/后退**
-  window.addEventListener('popstate', () => setTimeout(runScript, 300))
+    // 监听 pjax:end 事件，确保页面内容完全加载
+    document.addEventListener('pjax:end', () => {
+      console.log('GitHub PJAX 跳转，页面内容已加载');
+      runScript();  // 页面内容加载完成后执行 GitHub_Freshness
+    });
 
-    // **拦截 pushState & replaceState**
-    ; (function (history) {
-      const originalPushState = history.pushState
-      const originalReplaceState = history.replaceState
-      function newHistoryMethod(method) {
-        return function () {
-          const result = method.apply(this, arguments)
-          setTimeout(runScript, 50)
-          return result
-        }
-      }
-      history.pushState = newHistoryMethod(originalPushState)
-      history.replaceState = newHistoryMethod(originalReplaceState)
-    })(window.history)
+    // 重写 pushState 来处理 URL 变化
+    history.pushState = function (state, title, url) {
+      pushState.apply(history, arguments);  // 调用原始的 pushState
 
+      console.log('pushState 触发，URL 变化：', url);
+
+      // 页面内容加载完成后执行 runScript
+      // 这里利用 setTimeout 确保延迟执行，防止某些页面内容没加载完成
+      setTimeout(runScript, 350);
+    };
+
+    // 重写 replaceState 来处理 URL 变化
+    history.replaceState = function (state, title, url) {
+      replaceState.apply(history, arguments);  // 调用原始的 replaceState
+
+      console.log('replaceState 触发，URL 变化：', url);
+
+      // 页面内容加载完成后执行 runScript
+      setTimeout(runScript, 350);
+    };
+
+    // 监听浏览器的前进/后退按钮 (popstate)
+    window.addEventListener('popstate', () => {
+      console.log('popstate 触发，URL 变化：', window.location.href);
+
+      // 页面内容加载完成后执行 runScript
+      setTimeout(runScript, 500);
+    });
+  })(window.history);
   // === 初始化设置面板 ===
   // createSettingsPanel()
 

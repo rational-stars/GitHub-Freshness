@@ -1,2 +1,15 @@
  docs/.vitepress/cache
  docs/.vitepress/dist
+
+node_modules/
+# npm logs
+npm-debug.log
+yarn-error.log
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+ # OS generated files
+.DS_Store
+Thumbs.db
