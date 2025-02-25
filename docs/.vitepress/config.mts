@@ -8,7 +8,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: 'https://home.rational-stars.top/' },
-      { text: 'blog', link: 'https://rational-stars.top/' }
+      { text: 'blog', link: 'https://rational-stars.top/' },
+      { text: 'TG交流群', link: 'https://t.me/GitHubFreshness' },
     ],
 
     sidebar: [

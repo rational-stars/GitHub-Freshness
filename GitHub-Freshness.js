@@ -28,7 +28,7 @@
     ; ('use strict')
   // 引入 Pickr CSS
   GM_addStyle(
-    `@import url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/monolith.min.css');`
+    `@import url('https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/themes/classic.min.css');`
   )
   GM_addStyle(`
           .swal2-popup.swal2-modal.swal2-show{
