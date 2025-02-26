@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      1.1.4
+// @version      1.1.5
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
 // @author       向前 https://docs.rational-stars.top/ https://github.com/rational-stars/GitHub-Freshness https://home.rational-stars.top/
 // @license      MIT
@@ -27,9 +27,7 @@
     // 解析日期（指定格式和时区）
     ; ('use strict')
   // 引入 Pickr CSS
-  GM_addStyle(
-    `@import url('https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/themes/classic.min.css');`
-  )
+  GM_addStyle(`@import url('https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/themes/classic.min.css');`)
   GM_addStyle(`
           .swal2-popup.swal2-modal.swal2-show{
           color: #FFF;
@@ -214,7 +212,7 @@
       isEnabled: true, // 是否启用排序
     },
     AWESOME: {
-      isEnabled: true, // AWESOME项目是否启用
+      isEnabled: false, // AWESOME项目是否启用
     },
     TIME_FORMAT: {
       isEnabled: true, // 是否启用时间格式化
@@ -436,7 +434,6 @@
   }
   function setElementTIME_FORMAT(el, TIME_FORMAT, datetime) {
     if (TIME_FORMAT.isEnabled && el.css('display') !== 'none') {
-      console.log("向前🇨🇳 ====> setElementTIME_FORMAT ====> display:")
       el.css('display', 'none')
       const formattedDate = formatDate(datetime)
       el.before(`<span>${formattedDate}</span>`)
@@ -609,12 +606,11 @@
 
   }
   function GitHub_Freshness(theme = THEME) {
-    console.log("向前🇨🇳 ====> GitHub_Freshness ====> GitHub_Freshness:")
     const matchUrl = isMatchedUrl()
     if (!matchUrl) return
     if (matchUrl === 'matchSearchPage') return GitHub_FreshnessSearchPage(theme)
     const elements = $('.sc-aXZVg')
-    if (elements.length === 0) return console.log('没有找到日期元素', setTimeout(runScript, 350));
+    if (elements.length === 0) return console.log('没有找到日期元素');
     console.log("向前🇨🇳 ====> GitHub_Freshness ====> elements:", elements.length)
 
     let trRows = []
@@ -694,47 +690,51 @@
     if (!isMatchedUrl()) return;
     GitHub_Freshness();  // 页面内容加载完成后执行
   }, 350);  // 设置合适的延迟，避免频繁执行
+// 页面加载完成后执行
+window.addEventListener('load', () => {
+  console.log("页面加载完成 => 执行 runScript");
+  runScript();  // 页面加载完成后执行 GitHub_Freshness
+});
 
-  (function (history) {
-    // 保存原始的 pushState 和 replaceState 方法
-    const pushState = history.pushState;
-    const replaceState = history.replaceState;
+// 监听页面是否从不可见切换到可见
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    console.log("页面切换到前台 => 执行 runScript");
+    runScript();  // 页面切换到前台时执行
+  }
+});
 
-    // 监听 pjax:end 事件，确保页面内容完全加载
-    document.addEventListener('pjax:end', () => {
-      console.log('GitHub PJAX 跳转，页面内容已加载');
-      runScript();  // 页面内容加载完成后执行 GitHub_Freshness
-    });
+// 监听 pjax:end 事件，确保页面内容完全加载
+document.addEventListener('pjax:end', () => {
+  console.log('GitHub PJAX 跳转，页面内容已加载');
+  runScript();  // 页面内容加载完成后执行 GitHub_Freshness
+});
 
-    // 重写 pushState 来处理 URL 变化
-    history.pushState = function (state, title, url) {
-      pushState.apply(history, arguments);  // 调用原始的 pushState
+// 重写 history.pushState 和 history.replaceState 来处理 URL 变化
+(function (history) {
+  const pushState = history.pushState;
+  const replaceState = history.replaceState;
 
-      console.log('pushState 触发，URL 变化：', url);
+  // 监听 pushState 事件，确保 URL 变化时执行
+  history.pushState = function (state, title, url) {
+    pushState.apply(history, arguments);  // 调用原始的 pushState
+    console.log('pushState 触发，URL 变化：', url);
+    setTimeout(runScript, 350);  // 页面内容加载完成后执行 runScript
+  };
 
-      // 页面内容加载完成后执行 runScript
-      // 这里利用 setTimeout 确保延迟执行，防止某些页面内容没加载完成
-      setTimeout(runScript, 350);
-    };
+  // 监听 replaceState 事件，确保 URL 变化时执行
+  history.replaceState = function (state, title, url) {
+    replaceState.apply(history, arguments);  // 调用原始的 replaceState
+    console.log('replaceState 触发，URL 变化：', url);
+    setTimeout(runScript, 350);  // 页面内容加载完成后执行 runScript
+  };
 
-    // 重写 replaceState 来处理 URL 变化
-    history.replaceState = function (state, title, url) {
-      replaceState.apply(history, arguments);  // 调用原始的 replaceState
-
-      console.log('replaceState 触发，URL 变化：', url);
-
-      // 页面内容加载完成后执行 runScript
-      setTimeout(runScript, 350);
-    };
-
-    // 监听浏览器的前进/后退按钮 (popstate)
-    window.addEventListener('popstate', () => {
-      console.log('popstate 触发，URL 变化：', window.location.href);
-
-      // 页面内容加载完成后执行 runScript
-      setTimeout(runScript, 500);
-    });
-  })(window.history);
+  // 监听浏览器的前进/后退按钮 (popstate)
+  window.addEventListener('popstate', () => {
+    console.log('popstate 触发，URL 变化：', window.location.href);
+    setTimeout(runScript, 500);  // 页面内容加载完成后执行 runScript
+  });
+})(window.history);
   // === 初始化设置面板 ===
   // createSettingsPanel()
 
