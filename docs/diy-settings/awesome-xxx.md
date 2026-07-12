@@ -30,4 +30,6 @@
   
   3.复制刚刚生成的令牌到GitHub-Freshness设置页面的--AWESOME token--配置后面的输入框内并勾选复选框☑️就OK了。
 
+  > AWESOME token 输入框会以掩码形式显示内容，但它不是浏览器意义上的密码输入框。这样可以避免 Chrome 或密码管理器在保存设置时误弹“保存密码”提示。
+
   4.[声明](../what-is-GitHubFreshness.md#声明)

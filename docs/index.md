@@ -24,6 +24,9 @@ features:
   - title: 兼容多种浏览器
     icon: 🌐
     details: 脚本通过 Tampermonkey 执行，支持常见的浏览器（如 Chrome、Firefox、Edge 等），确保跨浏览器兼容性，提升用户体验。
+  - title: 中英文界面兼容
+    icon: 🌏
+    details: 设置面板、菜单和弹窗支持中文与英文显示，并兼容 GitHub 中文和英文界面下的更新时间解析。
   - title: 简洁、清新的用户界面
     icon: 🎨
     details: 采用适合长时间使用的设计，减少视觉疲劳。同时，提供对暗色主题的适配，保证在不同光线条件下都能获得良好的阅读体验。

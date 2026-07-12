@@ -37,7 +37,7 @@
 
 **点击链接安装**[GitHub Freshness](https://greasyfork.org/zh-CN/scripts/524465-github-freshness)油猴脚本：https://greasyfork.org/zh-CN/scripts/524465-github-freshness
 
-点击右上角扩展插件中的GitHub Freshness设置面板，然后设置喜欢的颜色和时间阈值即可 过于简单不再赘述。
+点击右上角扩展插件中的 GitHub Freshness 设置面板，然后设置喜欢的颜色、时间阈值和当前语言即可。脚本兼容 GitHub 中文和英文界面下的更新时间解析，过于简单不再赘述。
 
 详细使用教程点击去往[GitHub Freshness 在线文档](https://docs.rational-stars.top/)
 
