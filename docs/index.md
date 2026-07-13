@@ -23,7 +23,10 @@ hero:
 features:
   - title: 兼容多种浏览器
     icon: 🌐
-    details: 脚本通过 Tampermonkey 执行，支持常见的浏览器（如 Chrome、Firefox、Edge 等），确保跨浏览器兼容性，提升用户体验。
+    details: 提供 Chrome 扩展版和 Tampermonkey 脚本版，支持 Chrome、Firefox、Edge 等常见浏览器。
+  - title: 设置导入与导出
+    icon: 💾
+    details: 使用 JSON 文件备份和恢复主题、颜色、时间阈值、排序与语言设置，AWESOME token 始终只保留在本地。
   - title: 中英文界面兼容
     icon: 🌏
     details: 设置面板、菜单和弹窗支持中文与英文显示，并兼容 GitHub 中文和英文界面下的更新时间解析。

@@ -1,38 +1,30 @@
-// ==UserScript==
-// @name         GitHub Freshness
-// @namespace    http://tampermonkey.net/
-// @version      1.1.7
-// @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
-// @description:en  Highlights GitHub repositories by freshness so you can quickly spot active projects.
-// @author       向前 https://docs.rational-stars.top/ https://github.com/rational-stars/GitHub-Freshness https://home.rational-stars.top/
-// @license      MIT
-// @icon         https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg
-// @match        https://github.com/*/*
-// @match        https://github.com/search?*
-// @match        https://github.com/*/*/tree/*
-// @require      https://code.jquery.com/jquery-3.6.0.min.js
-// @require      https://cdn.jsdelivr.net/npm/sweetalert2@11
-// @require      https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/pickr.min.js
-// @require      https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js
-// @resource     pickrCSS https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/themes/monolith.min.css
-// @updateURL    https://raw.githubusercontent.com/rational-stars/GitHub-Freshness/main/GitHub-Freshness.js
-// @downloadURL  https://raw.githubusercontent.com/rational-stars/GitHub-Freshness/main/GitHub-Freshness.js
-// @grant        GM_registerMenuCommand
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_addStyle
-// @grant        GM_getResourceText
-// ==/UserScript==
-
-; (function () {
+; (async function () {
   // 引入 Luxon
   const DateTime = luxon.DateTime
     // 解析日期（指定格式和时区）
     ; ('use strict')
-  // 引入 Pickr CSS。GitHub CSP 会拦截 style 内的 @import，需通过 @resource 内联。
-  const pickrCSS = GM_getResourceText('pickrCSS')
-  if (pickrCSS) GM_addStyle(pickrCSS)
-  GM_addStyle(`
+
+  function chromeStorageGet(key, defaultValue) {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get({ [key]: defaultValue }, (items) => {
+        resolve(items[key])
+      })
+    })
+  }
+
+  function chromeStorageSet(key, value) {
+    return new Promise((resolve) => {
+      chrome.storage.sync.set({ [key]: value }, resolve)
+    })
+  }
+
+  function addStyle(css) {
+    const style = document.createElement('style')
+    style.textContent = css
+    document.documentElement.appendChild(style)
+  }
+
+  addStyle(`
           .swal2-popup.swal2-modal.swal2-show{
           color: #FFF;
           border-radius: 20px;
@@ -136,7 +128,7 @@
           }
           }
       `)
-  let CURRENT_LANGUAGE = GM_getValue('CURRENT_LANGUAGE', 'zh')
+  let CURRENT_LANGUAGE = await chromeStorageGet('CURRENT_LANGUAGE', 'zh')
   function resolveLocale(language = CURRENT_LANGUAGE) {
     if (language === 'zh' || language === 'en') return language
 
@@ -385,14 +377,14 @@
       isEnabled: true, // 是否启用时间格式化
     },
   }
-  let CURRENT_THEME = GM_getValue('CURRENT_THEME', 'light')
-  let AWESOME_TOKEN = GM_getValue('AWESOME_TOKEN', '')
+  let CURRENT_THEME = await chromeStorageGet('CURRENT_THEME', 'light')
+  let AWESOME_TOKEN = await chromeStorageGet('AWESOME_TOKEN', '')
   let THEME_TYPE = getThemeType()
   let config_JSON = normalizeConfig(
-    JSON.parse(GM_getValue('config_JSON', JSON.stringify({ light: default_THEME })))
+    JSON.parse(await chromeStorageGet('config_JSON', JSON.stringify({ light: default_THEME })))
   )
   let THEME = getThemeConfig(THEME_TYPE) // 当前主题
-  const DEBUG = GM_getValue('DEBUG', false)
+  const DEBUG = await chromeStorageGet('DEBUG', false)
   const PROCESSED_ATTR = 'data-github-freshness'
   const AWESOME_OBSERVED_ATTR = 'data-github-freshness-awesome-observed'
   const AWESOME_PROCESSED_ATTR = 'data-github-freshness-awesome-processed'
@@ -470,7 +462,7 @@
       pickrName.hide()
     })
   }
-  const preConfirm = () => {
+  const preConfirm = async () => {
     // 遍历默认主题配置，更新设置
     const updated_THEME = getUpdatedThemeConfig(default_THEME)
     CURRENT_THEME = $('#CURRENT_THEME-select').val()
@@ -481,15 +473,15 @@
       awesomeRepoCache.clear()
       awesomeRateLimitWarned = false
     }
-    // 保存到油猴存储
+    // 保存到 Chrome 扩展同步存储
     config_JSON = normalizeConfig({
       ...config_JSON,
       [$('#THEME-select').val()]: updated_THEME,
     })
-    GM_setValue('config_JSON', JSON.stringify(config_JSON))
-    GM_setValue('CURRENT_THEME', CURRENT_THEME)
-    GM_setValue('CURRENT_LANGUAGE', CURRENT_LANGUAGE)
-    GM_setValue('AWESOME_TOKEN', AWESOME_TOKEN)
+    await chromeStorageSet('config_JSON', JSON.stringify(config_JSON))
+    await chromeStorageSet('CURRENT_THEME', CURRENT_THEME)
+    await chromeStorageSet('CURRENT_LANGUAGE', CURRENT_LANGUAGE)
+    await chromeStorageSet('AWESOME_TOKEN', AWESOME_TOKEN)
     THEME = updated_THEME // 更新当前主题
     GitHub_Freshness(updated_THEME)
     Swal.fire({
@@ -661,9 +653,9 @@
   async function importSettings(file) {
     try {
       const settings = normalizeImportedSettings(JSON.parse(await file.text()))
-      GM_setValue('config_JSON', JSON.stringify(settings.config_JSON))
-      GM_setValue('CURRENT_THEME', settings.CURRENT_THEME)
-      if (settings.hasLanguage) GM_setValue('CURRENT_LANGUAGE', settings.CURRENT_LANGUAGE)
+      await chromeStorageSet('config_JSON', JSON.stringify(settings.config_JSON))
+      await chromeStorageSet('CURRENT_THEME', settings.CURRENT_THEME)
+      if (settings.hasLanguage) await chromeStorageSet('CURRENT_LANGUAGE', settings.CURRENT_LANGUAGE)
       const effectiveLanguage = settings.hasLanguage ? settings.CURRENT_LANGUAGE : CURRENT_LANGUAGE
       await Swal.fire({
         position: 'top',
@@ -1161,8 +1153,11 @@ document.addEventListener('pjax:end', () => {
   // === 初始化设置面板 ===
   // createSettingsPanel()
 
-  // === 使用油猴菜单显示/隐藏设置面板 ===
-  GM_registerMenuCommand(t('menuSettings'), createSettingsPanel)
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message && message.type === 'OPEN_GITHUB_FRESHNESS_SETTINGS') {
+      createSettingsPanel()
+    }
+  })
   // 监听主题变化
   window
     .matchMedia('(prefers-color-scheme: dark)')

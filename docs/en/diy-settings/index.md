@@ -55,6 +55,12 @@ Choose the language used by the settings panel, menu, and dialogs:
 
 The script also supports update-time parsing on both Chinese and English GitHub search pages.
 
+## Settings backup
+
+Click **Export JSON** to back up themes, colors, time thresholds, sorting, and language preferences. Click **Import JSON** to restore them. The page reloads automatically after a successful import.
+
+Exports never include the AWESOME token. Imports also ignore any token field in the backup and preserve the local AWESOME token.
+
 ## AWESOME token
 
 Go to [AWESOME token](./awesome-xxx.md#awesome-token).

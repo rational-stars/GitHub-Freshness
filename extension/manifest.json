@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Freshness",
+  "version": "1.1.7",
+  "description": "通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "GitHub Freshness 设置",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://github.com/*",
+    "https://api.github.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://github.com/*"
+      ],
+      "css": [
+        "vendor/sweetalert2.min.css",
+        "vendor/pickr/monolith.min.css"
+      ],
+      "js": [
+        "vendor/jquery.min.js",
+        "vendor/sweetalert2.all.min.js",
+        "vendor/pickr.min.js",
+        "vendor/luxon.min.js",
+        "content-script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

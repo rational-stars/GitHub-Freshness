@@ -30,6 +30,12 @@ github 项目里的文件夹和文件都以时间进行升序或者降序
 
 脚本同时兼容 GitHub 中文和英文界面下的搜索页更新时间解析。
 
+## 设置备份
+
+点击 **导出 JSON** 可以备份当前主题、颜色、时间阈值、排序和语言设置。点击 **导入 JSON** 可以恢复这些配置，导入成功后页面会自动刷新并应用设置。
+
+为避免泄露敏感信息，导出的 JSON 永远不会包含 AWESOME token。导入时也会忽略备份文件中的 token，并自动保留本地 AWESOME token。
+
 ## AWESOME token
 
 点击去往[AWESOME token](./awesome-xxx.md#awesome-token)

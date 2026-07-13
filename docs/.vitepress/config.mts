@@ -14,6 +14,7 @@ const zhThemeConfig = {
         { text: 'GitHub Freshness 是什么', link: '/what-is-GitHubFreshness.md' },
         { text: '预览', link: '/preview.md' },
         { text: '快速开始', link: '/getting-started.md' },
+        { text: 'Chrome 扩展安装', link: '/chrome-extension.md' },
       ]
     },
     {
@@ -50,6 +51,7 @@ const enThemeConfig = {
         { text: 'What is GitHub Freshness', link: '/en/what-is-GitHubFreshness.md' },
         { text: 'Preview', link: '/en/preview.md' },
         { text: 'Getting started', link: '/en/getting-started.md' },
+        { text: 'Chrome extension', link: '/en/chrome-extension.md' },
       ]
     },
     {

@@ -6,5 +6,11 @@
   },
   "devDependencies": {
     "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "@simonwep/pickr": "1.9.1",
+    "jquery": "3.6.0",
+    "luxon": "3.4.3",
+    "sweetalert2": "11.26.25"
   }
 }

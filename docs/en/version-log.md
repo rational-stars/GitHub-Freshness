@@ -1,5 +1,16 @@
 # GitHub Freshness Changelog
 
+## v1.1.7 - July 13, 2026
+
+- Added a Manifest V3 Chrome extension that can be loaded from the `extension` directory.
+- Added synchronized extension settings and toolbar access to the settings panel.
+- Added JSON settings import and export. Backups exclude the AWESOME token, and imports preserve the local token.
+- Changed the default interface language from Auto to Chinese while keeping Auto, Chinese, and English options.
+- Fixed the invalid SweetAlert2 position option that produced console warnings.
+- Fixed folder and file icon colors being overridden by GitHub styles.
+- Standardized settings panel spacing, control alignment, and mobile layout.
+- Bundled extension dependencies locally to comply with Chrome extension content security requirements.
+
 ## Bug fixes and improvements
 
 Version: v1.1.6 - July 13, 2026

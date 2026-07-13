@@ -22,7 +22,10 @@ hero:
 features:
   - title: Cross-browser support
     icon: 🌐
-    details: Runs through Tampermonkey and supports common browsers such as Chrome, Firefox, and Edge.
+    details: Available as a Chrome extension and a Tampermonkey userscript for Chrome, Firefox, Edge, and other common browsers.
+  - title: Settings import and export
+    icon: 💾
+    details: Back up and restore themes, colors, thresholds, sorting, and language settings as JSON while keeping the AWESOME token local.
   - title: Chinese and English compatible
     icon: 🌏
     details: The settings panel, menu, and dialogs support Chinese and English. Repository freshness parsing works on both Chinese and English GitHub pages.
