@@ -1,5 +1,14 @@
 # GitHub Freshness Changelog
 
+## v1.1.9 - July 13, 2026
+
+- Styled the Code button with the active theme's fresh background and text colors while preserving GitHub defaults when the related color options are disabled.
+- Added a branch-clock shortcut after the Code button that opens the settings panel.
+- Added early document-start processing that preserves GitHub's native Skeleton and finishes coloring, formatting, and sorting before real rows are first painted.
+- Removed the 350/500 ms repository and navigation delays in favor of microtask processing and a targeted MutationObserver.
+- Added Turbo, PJAX, History API, and dynamic-row support without duplicating the toolbar shortcut.
+- Removed hiding, fading, and second-stage reveals so the Code button and file list never disappear and reappear.
+
 ## v1.1.8 - July 13, 2026
 
 - Added the branch-clock icon across the extension toolbar, userscript metadata, settings title, and documentation home pages.

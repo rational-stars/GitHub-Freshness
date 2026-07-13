@@ -12,6 +12,8 @@ GitHub Freshness 同时提供 Chrome 扩展版和油猴脚本版。Chrome 扩展
 
 安装完成后，打开任意 GitHub 仓库页或搜索页即可自动应用新鲜度高亮。点击浏览器工具栏中的 GitHub Freshness 图标可以打开设置面板。
 
+进入仓库或切换项目时，扩展会保留 GitHub 原生 Skeleton 加载状态，并在真实文件列表首次绘制前完成颜色、日期和排序处理，不会隐藏内容或二次显示。仓库页 Code 按钮后的 branch-clock 图标也可以直接打开设置面板。
+
 ## 更新扩展
 
 拉取或下载最新代码后，在 `chrome://extensions/` 中找到 GitHub Freshness，然后点击刷新按钮。已经保存的设置会保留。

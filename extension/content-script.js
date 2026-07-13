@@ -4,12 +4,11 @@
     // 解析日期（指定格式和时区）
     ; ('use strict')
   const SETTINGS_ICON_URL = chrome.runtime.getURL('icons/icon-48.png')
+  const SETTINGS_READY_EVENT = 'github-freshness:settings-ready'
 
-  function chromeStorageGet(key, defaultValue) {
+  function chromeStorageGet(defaults) {
     return new Promise((resolve) => {
-      chrome.storage.sync.get({ [key]: defaultValue }, (items) => {
-        resolve(items[key])
-      })
+      chrome.storage.sync.get(defaults, resolve)
     })
   }
 
@@ -22,7 +21,17 @@
   function addStyle(css) {
     const style = document.createElement('style')
     style.textContent = css
-    document.documentElement.appendChild(style)
+    if (document.documentElement) {
+      document.documentElement.appendChild(style)
+      return
+    }
+
+    const rootObserver = new MutationObserver(() => {
+      if (!document.documentElement) return
+      rootObserver.disconnect()
+      document.documentElement.appendChild(style)
+    })
+    rootObserver.observe(document, { childList: true })
   }
 
   addStyle(`
@@ -210,11 +219,11 @@
           }
           }
       `)
-  let CURRENT_LANGUAGE = await chromeStorageGet('CURRENT_LANGUAGE', 'zh')
+  let CURRENT_LANGUAGE = 'zh'
   function resolveLocale(language = CURRENT_LANGUAGE) {
     if (language === 'zh' || language === 'en') return language
 
-    const pageLang = document.documentElement.lang || navigator.language || ''
+    const pageLang = document.documentElement?.lang || navigator.language || ''
     return pageLang.toLowerCase().startsWith('zh') ? 'zh' : 'en'
   }
   function getLocale() {
@@ -468,14 +477,22 @@
       isEnabled: true, // 是否启用时间格式化
     },
   }
-  let CURRENT_THEME = await chromeStorageGet('CURRENT_THEME', 'light')
-  let AWESOME_TOKEN = await chromeStorageGet('AWESOME_TOKEN', '')
+  const storedSettings = await chromeStorageGet({
+    CURRENT_LANGUAGE: 'zh',
+    CURRENT_THEME: 'light',
+    AWESOME_TOKEN: '',
+    config_JSON: JSON.stringify({ light: default_THEME }),
+    DEBUG: false,
+  })
+  CURRENT_LANGUAGE = storedSettings.CURRENT_LANGUAGE
+  let CURRENT_THEME = storedSettings.CURRENT_THEME
+  let AWESOME_TOKEN = storedSettings.AWESOME_TOKEN
   let THEME_TYPE = getThemeType()
   let config_JSON = normalizeConfig(
-    JSON.parse(await chromeStorageGet('config_JSON', JSON.stringify({ light: default_THEME })))
+    JSON.parse(storedSettings.config_JSON)
   )
   let THEME = getThemeConfig(THEME_TYPE) // 当前主题
-  const DEBUG = await chromeStorageGet('DEBUG', false)
+  const DEBUG = storedSettings.DEBUG
   const PROCESSED_ATTR = 'data-github-freshness'
   const CODE_BUTTON_ATTR = 'data-github-freshness-code-button'
   const TOOLBAR_SETTINGS_ID = 'github-freshness-toolbar-settings'
@@ -805,6 +822,11 @@
   }
   // === 创建设置面板 ===
   function createSettingsPanel() {
+    if (typeof Swal === 'undefined' || typeof Pickr === 'undefined') {
+      document.addEventListener(SETTINGS_READY_EVENT, createSettingsPanel, { once: true })
+      return
+    }
+
     Swal.fire({
       title: `<a target="_blank" tabindex="-1" id="swal2-title-div" href="https://home.rational-stars.top/"><img src="${SETTINGS_ICON_URL}" alt="GitHub Freshness"></a><a class="github-freshness-title-link" tabindex="-1" target="_blank" href="https://github.com/rational-stars/GitHub-Freshness">${t('settings')}</a>`,
       html: getPanelDom(),
@@ -870,9 +892,7 @@
         this.style.setProperty('fill', theme.FONT.highlightColor, 'important')
       })
     }
-    if (theme.BGC.isEnabled || theme.FONT.isEnabled) {
-      codeButton.attr(CODE_BUTTON_ATTR, 'true')
-    }
+    codeButton.attr(CODE_BUTTON_ATTR, 'true')
 
     const details = codeButton.closest('details')
     const anchor = details.length ? details[0] : codeButton[0]
@@ -1202,11 +1222,17 @@
   }
   function GitHub_Freshness(theme = THEME) {
     const matchUrl = isMatchedUrl()
-    if (!matchUrl) return
-    if (matchUrl === 'matchSearchPage') return GitHub_FreshnessSearchPage(theme)
+    if (!matchUrl) return true
+    if (matchUrl === 'matchSearchPage') {
+      GitHub_FreshnessSearchPage(theme)
+      return true
+    }
     setupRepoToolbar(theme)
     const elements = $('tr.react-directory-row relative-time[datetime], .sc-aXZVg[datetime]')
-    if (elements.length === 0) return debugLog('没有找到日期元素');
+    if (elements.length === 0) {
+      debugLog('等待 GitHub 加载真实日期元素')
+      return false
+    }
     debugLog("向前🇨🇳 ====> GitHub_Freshness ====> elements:", elements.length)
 
     let trRows = []
@@ -1257,6 +1283,7 @@
     if (theme.AWESOME.isEnabled && repoTitle.includes('awesome')) {
       GitHub_FreshnessAwesome()
     }
+    return true
   }
   function formatDate(dateString, type = 'ISO8601') {
     if (type === 'UTC') {
@@ -1288,18 +1315,32 @@
     return null
   }
 
-  function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
+  let runScheduled = false
+  function runScript() {
+    if (runScheduled) return
+    runScheduled = true
+    queueMicrotask(() => {
+      runScheduled = false
+      GitHub_Freshness()
+    })
   }
+  function containsPendingRepoContent(node) {
+    if (!(node instanceof Element)) return false
 
-  const runScript = debounce(() => {
-    if (!isMatchedUrl()) return;
-    GitHub_Freshness();  // 页面内容加载完成后执行
-  }, 350);  // 设置合适的延迟，避免频繁执行
+    const dateElements = node.matches('relative-time[datetime]')
+      ? [node]
+      : [...node.querySelectorAll('tr.react-directory-row relative-time[datetime]')]
+    if (dateElements.some((dateElement) => {
+      const row = dateElement.closest('tr.react-directory-row')
+      return row && row.getAttribute(PROCESSED_ATTR) !== 'true'
+    })) return true
+
+    const codeIcon = node.matches('svg.octicon-code')
+      ? node
+      : node.querySelector('button svg.octicon-code, summary svg.octicon-code')
+    const codeControl = codeIcon && codeIcon.closest('button, summary')
+    return !!codeControl && codeControl.getAttribute(CODE_BUTTON_ATTR) !== 'true'
+  }
 // 页面加载完成后执行
 window.addEventListener('load', () => {
   debugLog("页面加载完成 => 执行 runScript");
@@ -1324,12 +1365,29 @@ document.addEventListener('pjax:end', () => {
 document.addEventListener('turbo:render', runScript)
 document.addEventListener('turbo:load', runScript)
 
-const toolbarObserver = new MutationObserver(() => {
+const repositoryObserver = new MutationObserver((mutations) => {
   if (isMatchedUrl() !== 'matchRepoPage') return
-  if (document.getElementById(TOOLBAR_SETTINGS_ID)) return
-  if (document.querySelector('button .octicon-code, summary .octicon-code')) runScript()
+  const shouldProcess = mutations.some((mutation) =>
+    [...mutation.addedNodes].some(containsPendingRepoContent)
+  )
+  if (!shouldProcess) return
+  runScript()
 })
-toolbarObserver.observe(document.body, { childList: true, subtree: true });
+function observeRepositoryRoot() {
+  if (document.documentElement) {
+    repositoryObserver.observe(document.documentElement, { childList: true, subtree: true })
+    return
+  }
+
+  const rootObserver = new MutationObserver(() => {
+    if (!document.documentElement) return
+    rootObserver.disconnect()
+    repositoryObserver.observe(document.documentElement, { childList: true, subtree: true })
+    runScript()
+  })
+  rootObserver.observe(document, { childList: true })
+}
+observeRepositoryRoot();
 
 // 重写 history.pushState 和 history.replaceState 来处理 URL 变化
 (function (history) {
@@ -1340,20 +1398,20 @@ toolbarObserver.observe(document.body, { childList: true, subtree: true });
   history.pushState = function (state, title, url) {
     pushState.apply(history, arguments);  // 调用原始的 pushState
     debugLog('pushState 触发，URL 变化：', url);
-    setTimeout(runScript, 350);  // 页面内容加载完成后执行 runScript
+    runScript()
   };
 
   // 监听 replaceState 事件，确保 URL 变化时执行
   history.replaceState = function (state, title, url) {
     replaceState.apply(history, arguments);  // 调用原始的 replaceState
     debugLog('replaceState 触发，URL 变化：', url);
-    setTimeout(runScript, 350);  // 页面内容加载完成后执行 runScript
+    runScript()
   };
 
   // 监听浏览器的前进/后退按钮 (popstate)
   window.addEventListener('popstate', () => {
     debugLog('popstate 触发，URL 变化：', window.location.href);
-    setTimeout(runScript, 500);  // 页面内容加载完成后执行 runScript
+    runScript()
   });
 })(window.history);
   // === 初始化设置面板 ===
