@@ -175,6 +175,31 @@
           background: var(--gf-control);
           color: var(--gf-text);
           }
+          .github-freshness-toolbar-button{
+          box-sizing: border-box;
+          display: inline-flex;
+          width: 32px;
+          height: 32px;
+          flex: 0 0 32px;
+          margin-left: 8px;
+          padding: 4px;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid var(--button-default-borderColor-rest, var(--color-btn-border));
+          border-radius: 6px;
+          background: var(--button-default-bgColor-rest, var(--color-btn-bg));
+          box-shadow: var(--button-default-shadow-resting, var(--color-btn-shadow));
+          cursor: pointer;
+          }
+          .github-freshness-toolbar-button:hover{
+          background: var(--button-default-bgColor-hover, var(--color-btn-hover-bg));
+          }
+          .github-freshness-toolbar-button img{
+          display: block;
+          width: 22px;
+          height: 22px;
+          border-radius: 5px;
+          }
           @media (max-width: 480px) {
           .row-box {
           grid-template-columns: 1fr;
@@ -240,6 +265,7 @@
       rateLimit: '检测到 AWESOME API 速率限制超出！',
       details: '查看详情',
       menuSettings: '⚙️ 设置面板',
+      openSettings: '打开 GitHub 新鲜度设置',
       starMessage: '如果您觉得 GitHub-Freshness 好用，点击下方 GitHub 链接给个 star 吧。非常感谢你！！！',
     },
     en: {
@@ -278,6 +304,7 @@
       rateLimit: 'AWESOME API rate limit exceeded!',
       details: 'Details',
       menuSettings: '⚙️ Settings',
+      openSettings: 'Open GitHub Freshness settings',
       starMessage: 'If GitHub-Freshness helps you, please give it a star from the GitHub link below. Thank you!',
     },
   }
@@ -458,6 +485,8 @@
   let THEME = getThemeConfig(THEME_TYPE) // 当前主题
   const DEBUG = GM_getValue('DEBUG', false)
   const PROCESSED_ATTR = 'data-github-freshness'
+  const CODE_BUTTON_ATTR = 'data-github-freshness-code-button'
+  const TOOLBAR_SETTINGS_ID = 'github-freshness-toolbar-settings'
   const AWESOME_OBSERVED_ATTR = 'data-github-freshness-awesome-observed'
   const AWESOME_PROCESSED_ATTR = 'data-github-freshness-awesome-processed'
   const awesomeRepoCache = new Map()
@@ -814,6 +843,63 @@
       this.value = ''
     })
   }
+  function getRepoCodeButton() {
+    return $('button, summary').filter(function () {
+      if (!$(this).find('svg.octicon-code').length) return false
+      const label = $(this).text().replace(/\s+/g, ' ').trim()
+      return label === 'Code' || label === '代码'
+    }).first()
+  }
+  function resetCodeButtonStyle(button) {
+    if (button.attr(CODE_BUTTON_ATTR) !== 'true') return
+    const element = button[0]
+    element.style.removeProperty('background-color')
+    element.style.removeProperty('border-color')
+    element.style.removeProperty('color')
+    button.find('svg').each(function () {
+      this.style.removeProperty('color')
+      this.style.removeProperty('fill')
+    })
+    button.removeAttr(CODE_BUTTON_ATTR)
+  }
+  function setupRepoToolbar(theme = THEME) {
+    const codeButton = getRepoCodeButton()
+    if (!codeButton.length) return false
+
+    resetCodeButtonStyle(codeButton)
+    if (theme.BGC.isEnabled) {
+      codeButton[0].style.setProperty('background-color', theme.BGC.highlightColor, 'important')
+      codeButton[0].style.setProperty('border-color', theme.BGC.highlightColor, 'important')
+    }
+    if (theme.FONT.isEnabled) {
+      codeButton[0].style.setProperty('color', theme.FONT.highlightColor, 'important')
+      codeButton.find('svg').each(function () {
+        this.style.setProperty('color', theme.FONT.highlightColor, 'important')
+        this.style.setProperty('fill', theme.FONT.highlightColor, 'important')
+      })
+    }
+    if (theme.BGC.isEnabled || theme.FONT.isEnabled) {
+      codeButton.attr(CODE_BUTTON_ATTR, 'true')
+    }
+
+    const details = codeButton.closest('details')
+    const anchor = details.length ? details[0] : codeButton[0]
+    let settingsButton = document.getElementById(TOOLBAR_SETTINGS_ID)
+    if (!settingsButton) {
+      settingsButton = document.createElement('button')
+      settingsButton.type = 'button'
+      settingsButton.id = TOOLBAR_SETTINGS_ID
+      settingsButton.className = 'github-freshness-toolbar-button'
+      settingsButton.innerHTML = `<img src="${SETTINGS_ICON_URL}" alt="">`
+      settingsButton.addEventListener('click', createSettingsPanel)
+    }
+    settingsButton.title = t('openSettings')
+    settingsButton.setAttribute('aria-label', t('openSettings'))
+    if (anchor.nextElementSibling !== settingsButton) {
+      anchor.insertAdjacentElement('afterend', settingsButton)
+    }
+    return true
+  }
   function setElementBGC(el, BGC, timeResult) {
     // el是元素 BGC是 theme BGC配置对象
     if (el.length && BGC.isEnabled) {
@@ -1126,6 +1212,7 @@
     const matchUrl = isMatchedUrl()
     if (!matchUrl) return
     if (matchUrl === 'matchSearchPage') return GitHub_FreshnessSearchPage(theme)
+    setupRepoToolbar(theme)
     const elements = $('tr.react-directory-row relative-time[datetime], .sc-aXZVg[datetime]')
     if (elements.length === 0) return debugLog('没有找到日期元素');
     debugLog("向前🇨🇳 ====> GitHub_Freshness ====> elements:", elements.length)
@@ -1226,6 +1313,7 @@ window.addEventListener('load', () => {
   debugLog("页面加载完成 => 执行 runScript");
   runScript();  // 页面加载完成后执行 GitHub_Freshness
 });
+runScript();
 
 // 监听页面是否从不可见切换到可见
 document.addEventListener('visibilitychange', () => {
@@ -1240,6 +1328,16 @@ document.addEventListener('pjax:end', () => {
   debugLog('GitHub PJAX 跳转，页面内容已加载');
   runScript();  // 页面内容加载完成后执行 GitHub_Freshness
 });
+
+document.addEventListener('turbo:render', runScript)
+document.addEventListener('turbo:load', runScript)
+
+const toolbarObserver = new MutationObserver(() => {
+  if (isMatchedUrl() !== 'matchRepoPage') return
+  if (document.getElementById(TOOLBAR_SETTINGS_ID)) return
+  if (document.querySelector('button .octicon-code, summary .octicon-code')) runScript()
+})
+toolbarObserver.observe(document.body, { childList: true, subtree: true });
 
 // 重写 history.pushState 和 history.replaceState 来处理 URL 变化
 (function (history) {
