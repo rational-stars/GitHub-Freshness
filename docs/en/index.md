@@ -6,7 +6,7 @@ hero:
   text: "Highlight repositories by freshness"
   tagline: Quickly see which GitHub repositories and files are still being updated.
   image:
-    src: https://cdn.jsdelivr.net/gh/rational-stars/picgo/avatar.jpg
+    src: /img/branch-clock.png
     alt: GitHub Freshness
   actions:
     - theme: brand

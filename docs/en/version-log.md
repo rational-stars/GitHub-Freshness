@@ -1,5 +1,13 @@
 # GitHub Freshness Changelog
 
+## v1.1.8 - July 13, 2026
+
+- Added the branch-clock icon across the extension toolbar, userscript metadata, settings title, and documentation home pages.
+- Applied the Midnight Mint palette to the settings panel and its save, import-success, and rate-limit dialogs.
+- Fixed settings-title icon loading and text alignment; the Chrome extension now uses its bundled icon directly.
+- Localized theme options as Auto, Light, and Dark in English and 自动、浅色、深色 in Chinese.
+- Added immediate settings-panel language preview while persisting the choice only after Save; Cancel leaves the stored language unchanged.
+
 ## v1.1.7 - July 13, 2026
 
 - Added a Manifest V3 Chrome extension that can be loaded from the `extension` directory.

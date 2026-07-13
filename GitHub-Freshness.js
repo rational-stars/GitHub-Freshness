@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      1.1.7
+// @version      1.1.8
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
 // @description:en  Highlights GitHub repositories by freshness so you can quickly spot active projects.
 // @author       向前 https://docs.rational-stars.top/ https://github.com/rational-stars/GitHub-Freshness https://home.rational-stars.top/
 // @license      MIT
-// @icon         https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg
+// @icon         https://raw.githubusercontent.com/rational-stars/GitHub-Freshness/refs/heads/main/docs/public/img/branch-clock.png
 // @match        https://github.com/*/*
 // @match        https://github.com/search?*
 // @match        https://github.com/*/*/tree/*
@@ -29,33 +29,62 @@
   const DateTime = luxon.DateTime
     // 解析日期（指定格式和时区）
     ; ('use strict')
+  const SETTINGS_ICON_URL = 'https://raw.githubusercontent.com/rational-stars/GitHub-Freshness/refs/heads/main/docs/public/img/branch-clock.png'
   // 引入 Pickr CSS。GitHub CSP 会拦截 style 内的 @import，需通过 @resource 内联。
   const pickrCSS = GM_getResourceText('pickrCSS')
   if (pickrCSS) GM_addStyle(pickrCSS)
   GM_addStyle(`
           .swal2-popup.swal2-modal.swal2-show{
-          color: #FFF;
-          border-radius: 20px;
-          background: #31b96c;
-          box-shadow:  8px 8px 16px #217e49,
-          -8px -8px 16px #41f48f;
+          --gf-panel: #151e2b;
+          --gf-control: #202c3b;
+          --gf-primary: #35d39a;
+          --gf-primary-text: #10251f;
+          --gf-text: #f7fafc;
+          --gf-muted: #9fb0bf;
+          --gf-border: #344357;
+          --gf-link: #58d5cc;
+          color: var(--gf-text);
+          border: 1px solid var(--gf-border);
+          border-radius: 12px;
+          background: var(--gf-panel);
+          box-shadow: 0 22px 56px rgba(6, 12, 20, .42);
           }
           #swal2-title a{
-          display: inline-block;
-          height: 40px;
-          margin-right: 10px;
-          border-radius: 10px;
-          overflow: hidden;
           color: #fff;
+          text-decoration: none;
           }
           #swal2-title {
           display: flex !important;
+          gap: 10px;
           justify-content: center;
+          align-items: center;
+          line-height: 1.2;
+          color: var(--gf-text) !important;
+          }
+          #swal2-title-div {
+          display: block;
+          flex: 0 0 40px;
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          overflow: hidden;
+          }
+          #swal2-title-div img {
+          display: block;
+          width: 40px;
+          height: 40px;
+          object-fit: cover;
+          }
+          .github-freshness-title-link {
+          display: flex;
+          min-width: 0;
           align-items: center;
           }
           .row-box select {
-          border:unset;
-          border-radius: .15em;
+          border: 1px solid var(--gf-border);
+          border-radius: 6px;
+          background: var(--gf-control);
+          color: var(--gf-text);
           }
           .row-box {
           box-sizing: border-box;
@@ -66,10 +95,15 @@
           padding: 6px 25px;
           column-gap: 18px;
           align-items: center;
+          border-bottom: 1px solid rgba(52, 67, 87, .55);
           }
           .row-box .swal2-input {
           height: 40px;
           margin: 0;
+          border: 1px solid var(--gf-border);
+          border-radius: 6px;
+          background: var(--gf-control);
+          color: var(--gf-text);
           }
           .row-box label {
           margin-right: 10px;
@@ -80,7 +114,7 @@
           text-align: left;
           }
           .row-box main input{
-          background: rgba(15, 172, 83, 1);
+          background: var(--gf-control);
           }
           .row-box main {
           display: flex;
@@ -101,6 +135,15 @@
           -webkit-text-security: disc;
           text-security: disc;
           }
+          .row-box input[type="checkbox"]{
+          accent-color: var(--gf-primary);
+          }
+          .swal2-html-container p{
+          color: var(--gf-muted);
+          }
+          .swal2-html-container a{
+          color: var(--gf-link);
+          }
           .github-freshness-transfer-actions{
           display: flex;
           gap: 10px;
@@ -108,15 +151,29 @@
           .github-freshness-transfer-button{
           min-width: 110px;
           padding: 9px 14px;
-          border: 1px solid rgba(255, 255, 255, .55);
+          border: 1px solid var(--gf-border);
           border-radius: 6px;
-          background: rgba(0, 0, 0, .12);
-          color: #fff;
+          background: var(--gf-control);
+          color: var(--gf-text);
           cursor: pointer;
           font-weight: 600;
           }
           .github-freshness-transfer-button:hover{
-          background: rgba(0, 0, 0, .22);
+          border-color: var(--gf-link);
+          background: #283647;
+          }
+          .swal2-confirm.swal2-styled{
+          background: var(--gf-primary) !important;
+          color: var(--gf-primary-text) !important;
+          }
+          .swal2-cancel.swal2-styled{
+          border: 1px solid var(--gf-border);
+          background: var(--gf-control) !important;
+          color: var(--gf-text) !important;
+          }
+          .swal2-validation-message{
+          background: var(--gf-control);
+          color: var(--gf-text);
           }
           @media (max-width: 480px) {
           .row-box {
@@ -165,6 +222,8 @@
       currentTheme: '当前主题:',
       currentLanguage: '当前语言:',
       auto: '自动',
+      light: '浅色',
+      dark: '深色',
       chinese: '中文',
       english: '英文',
       awesomeToken: 'AWESOME token: ',
@@ -201,6 +260,8 @@
       currentTheme: 'Current theme:',
       currentLanguage: 'Current language:',
       auto: 'Auto',
+      light: 'Light',
+      dark: 'Dark',
       chinese: 'Chinese',
       english: 'English',
       awesomeToken: 'AWESOME token: ',
@@ -220,18 +281,21 @@
       starMessage: 'If GitHub-Freshness helps you, please give it a star from the GitHub link below. Thank you!',
     },
   }
-  function t(key) {
-    const locale = getLocale()
+  function tFor(key, language = CURRENT_LANGUAGE) {
+    const locale = resolveLocale(language)
     return messages[locale][key] || messages.zh[key] || key
+  }
+  function t(key) {
+    return tFor(key)
   }
   function getPanelDom() {
     return `
               <div class="row-box">
-                  <label for="rpcPort">${t('themeSettings')}</label>
+                  <label id="THEME-label" for="THEME-select">${t('themeSettings')}</label>
                   <main>
                       <select tabindex="-1" id="THEME-select" class="swal2-input">
-                          <option value="light">light</option>
-                          <option value="dark">dark</option>
+                          <option value="light">${t('light')}</option>
+                          <option value="dark">${t('dark')}</option>
                       </select>
                   </main>
               </div>
@@ -310,18 +374,18 @@
               </div>
 
               <div class="row-box">
-                  <label for="rpcPort">${t('currentTheme')}</label>
+                  <label id="CURRENT_THEME-label" for="CURRENT_THEME-select">${t('currentTheme')}</label>
                   <main>
                       <select tabindex="-1" id="CURRENT_THEME-select" class="swal2-input">
-                          <option value="auto">auto</option>
-                          <option value="light">light</option>
-                          <option value="dark">dark</option>
+                          <option value="auto">${t('auto')}</option>
+                          <option value="light">${t('light')}</option>
+                          <option value="dark">${t('dark')}</option>
                       </select>
                   </main>
               </div>
 
               <div class="row-box">
-                  <label for="LANGUAGE-select">${t('currentLanguage')}</label>
+                  <label id="LANGUAGE-label" for="LANGUAGE-select">${t('currentLanguage')}</label>
                   <main>
                       <select tabindex="-1" id="LANGUAGE-select" class="swal2-input">
                           <option value="auto">${t('auto')}</option>
@@ -332,7 +396,7 @@
               </div>
 
               <div class="row-box github-freshness-transfer-row">
-                  <label>${t('settingsTransfer')}</label>
+                  <label id="SETTINGS_TRANSFER-label">${t('settingsTransfer')}</label>
                   <main class="github-freshness-transfer-actions">
                       <button type="button" id="SETTINGS-import" class="github-freshness-transfer-button">${t('importSettings')}</button>
                       <button type="button" id="SETTINGS-export" class="github-freshness-transfer-button">${t('exportSettings')}</button>
@@ -349,7 +413,7 @@
                       <input id="AWESOME_TOKEN" type="text" class="swal2-input github-freshness-secret-input" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
                   </main>
               </div>
-            <p>${t('settingsHint')} <a target="_blank" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html">${t('docs')}</a></p>
+            <p id="SETTINGS-hint">${t('settingsHint')} <a target="_blank" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html">${t('docs')}</a></p>
 
           `
   }
@@ -494,8 +558,10 @@
     GitHub_Freshness(updated_THEME)
     Swal.fire({
       position: 'top',
-      background: '#4ab96f',
+      background: '#151e2b',
+      color: '#f7fafc',
       icon: 'success',
+      iconColor: '#35d39a',
       title: t('settingsSaved'),
       showConfirmButton: false,
       timer: 800,
@@ -600,6 +666,41 @@
       }
     }
   }
+  function updateSettingsLanguagePreview(language) {
+    const tr = (key) => tFor(key, language)
+    $('.github-freshness-title-link').text(tr('settings'))
+    $('#THEME-label').text(tr('themeSettings'))
+    $('#TIME_BOUNDARY-label').text(tr('timeBoundary'))
+    $('#BGC-label').text(tr('backgroundColor'))
+    $('#FONT-label').text(tr('fontColor'))
+    $('#DIR-label').text(tr('directoryColor'))
+    $('#TIME_FORMAT-label').text(tr('timeFormat'))
+    $('#SORT-label').text(tr('fileSort'))
+    $('#CURRENT_THEME-label').text(tr('currentTheme'))
+    $('#LANGUAGE-label').text(tr('currentLanguage'))
+    $('#SETTINGS_TRANSFER-label').text(tr('settingsTransfer'))
+    $('#AWESOME-label a').text(tr('awesomeToken'))
+
+    $('#THEME-select option[value="light"]').text(tr('light'))
+    $('#THEME-select option[value="dark"]').text(tr('dark'))
+    $('#TIME_BOUNDARY-select option[value="day"]').text(tr('day'))
+    $('#TIME_BOUNDARY-select option[value="week"]').text(tr('week'))
+    $('#TIME_BOUNDARY-select option[value="month"]').text(tr('month'))
+    $('#TIME_BOUNDARY-select option[value="year"]').text(tr('year'))
+    $('#SORT-select option[value="asc"]').text(tr('sortAsc'))
+    $('#SORT-select option[value="desc"]').text(tr('sortDesc'))
+    $('#CURRENT_THEME-select option[value="auto"]').text(tr('auto'))
+    $('#CURRENT_THEME-select option[value="light"]').text(tr('light'))
+    $('#CURRENT_THEME-select option[value="dark"]').text(tr('dark'))
+    $('#LANGUAGE-select option[value="auto"]').text(tr('auto'))
+    $('#LANGUAGE-select option[value="zh"]').text(tr('chinese'))
+    $('#LANGUAGE-select option[value="en"]').text(tr('english'))
+    $('#SETTINGS-import').text(tr('importSettings'))
+    $('#SETTINGS-export').text(tr('exportSettings'))
+    $('#SETTINGS-hint').html(`${tr('settingsHint')} <a target="_blank" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html">${tr('docs')}</a>`)
+    $('.swal2-confirm').text(tr('saveSettings'))
+    $('.swal2-cancel').text(tr('cancel'))
+  }
   function getSettingsFromPanel() {
     return {
       schemaVersion: 1,
@@ -667,8 +768,10 @@
       const effectiveLanguage = settings.hasLanguage ? settings.CURRENT_LANGUAGE : CURRENT_LANGUAGE
       await Swal.fire({
         position: 'top',
-        background: '#4ab96f',
+        background: '#151e2b',
+        color: '#f7fafc',
         icon: 'success',
+        iconColor: '#35d39a',
         title: messages[resolveLocale(effectiveLanguage)].importSuccess,
         showConfirmButton: false,
         timer: 900,
@@ -682,7 +785,7 @@
   // === 创建设置面板 ===
   function createSettingsPanel() {
     Swal.fire({
-      title: `<a target="_blank" tabindex="-1" id="swal2-title-div" href="https://home.rational-stars.top/"><img src="https://raw.githubusercontent.com/rational-stars/picgo/refs/heads/main/avatar.jpg" alt="GitHub Freshness" width="40"></a><a tabindex="-1" target="_blank" href="https://github.com/rational-stars/GitHub-Freshness">${t('settings')}</a>`,
+      title: `<a target="_blank" tabindex="-1" id="swal2-title-div" href="https://home.rational-stars.top/"><img src="${SETTINGS_ICON_URL}" alt="GitHub Freshness"></a><a class="github-freshness-title-link" tabindex="-1" target="_blank" href="https://github.com/rational-stars/GitHub-Freshness">${t('settings')}</a>`,
       html: getPanelDom(),
       focusConfirm: false,
       preConfirm,
@@ -699,6 +802,9 @@
       let theme = getThemeConfig(selectedTheme)
       debugLog('主题设置变更:', selectedTheme)
       handelData(theme)
+    })
+    $('#LANGUAGE-select').on('change', function () {
+      updateSettingsLanguagePreview($(this).val())
     })
     $('#SETTINGS-export').on('click', exportSettings)
     $('#SETTINGS-import').on('click', () => $('#SETTINGS-import-file').trigger('click'))
@@ -909,10 +1015,12 @@
     Swal.fire({
       position: 'top',
       icon: 'warning',
+      iconColor: '#ffc24b',
       title: t('rateLimit'),
       confirmButtonText: t('details'),
       showConfirmButton: true,
-      background: '#4ab96f',
+      background: '#151e2b',
+      color: '#f7fafc',
       preConfirm: () => {
         window.open("https://home.rational-stars.top/", "_blank")
       }

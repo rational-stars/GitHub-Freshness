@@ -7,8 +7,8 @@ hero:
   text: "通过颜色高亮的方式"
   tagline: 帮助你快速判断一个 GitHub 仓库更新了那些文件。
   image:
-    src: https://cdn.jsdelivr.net/gh/rational-stars/picgo/avatar.jpg
-    alt: VitePress
+    src: /img/branch-clock.png
+    alt: GitHub Freshness
   actions:
     - theme: brand
       text: GitHub Freshness 是什么

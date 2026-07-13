@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GitHub Freshness",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。",
   "icons": {
     "16": "icons/icon-16.png",
@@ -28,6 +28,16 @@
   "host_permissions": [
     "https://github.com/*",
     "https://api.github.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*.png"
+      ],
+      "matches": [
+        "https://github.com/*"
+      ]
+    }
   ],
   "content_scripts": [
     {

@@ -8,8 +8,10 @@ GitHub Freshness compares each repository or file update time with your configur
 
 Choose which theme configuration you are editing:
 
-- **light**
-- **dark**
+- **Light**
+- **Dark**
+
+The option labels follow the selected interface language. Saving writes the current colors, threshold, and switches to the selected theme.
 
 ## Time threshold
 
@@ -41,9 +43,9 @@ Sort repository files and folders by update time in ascending or descending orde
 
 Choose the active theme behavior:
 
-- **auto**: follow the system light/dark preference.
-- **light**: use the light theme configuration.
-- **dark**: use the dark theme configuration.
+- **Auto**: follow the system light/dark preference.
+- **Light**: use the light theme configuration.
+- **Dark**: use the dark theme configuration.
 
 ## Current language
 
@@ -53,7 +55,13 @@ Choose the language used by the settings panel, menu, and dialogs:
 - **Chinese**: force Chinese.
 - **English**: force English.
 
-The script also supports update-time parsing on both Chinese and English GitHub search pages.
+Changing the language immediately previews the panel title, labels, options, buttons, and hints. The preference is written only after clicking **Save settings**; **Cancel** discards the language change. Previewing a language does not clear unsaved colors, thresholds, switches, or the token.
+
+Both the extension and userscript support update-time parsing on Chinese and English GitHub search pages.
+
+## Settings panel appearance
+
+The panel uses the “Midnight Mint” palette derived from the branch-clock icon: a deep navy panel, dark controls, mint primary actions, cyan links, and amber warning states. This palette affects only the settings interface and does not change repository highlight colors configured by the user.
 
 ## Settings backup
 
