@@ -1,25 +1,46 @@
 # Chrome extension
 
-GitHub Freshness is available as both a Chrome extension and a userscript. The Chrome extension does not require Tampermonkey and provides the same features and settings as the userscript.
+The GitHub Freshness Chrome extension does not require Tampermonkey and provides the same core features and settings as the userscript.
 
-## Get and install
+## Review status
 
-The Chrome extension is distributed separately through official channels. The public [GitHub Freshness repository](https://github.com/rational-stars/GitHub-Freshness) contains the userscript and project documentation, but does not include the Chrome extension source or an `extension` directory for loading an unpacked build.
+The extension has been submitted to the Chrome Web Store and is currently under review. The official store installation link will be added to this page after approval.
 
-The official installation link will be added to this page when it is available. Do not install extension files from unofficial sources.
+The public [GitHub Freshness repository](https://github.com/rational-stars/GitHub-Freshness) contains only the userscript and project documentation. It does not include the Chrome extension source or an `extension` directory for local loading. Do not install extension files from unofficial sources.
 
-After installation, open any GitHub repository or search page to apply freshness highlighting. Click the GitHub Freshness toolbar icon to open the settings panel.
+## Supported pages
 
-When opening or switching repositories, the extension preserves GitHub's native Skeleton state and finishes colors, dates, and sorting before real rows are first painted, without hiding or revealing content a second time. The branch-clock shortcut after the repository Code button also opens the settings panel directly.
+- GitHub repository home pages and file lists.
+- Repository subdirectories and the current tree view.
+- GitHub repository search results.
+- Awesome-style project lists.
 
-The settings panel provides icon links to the documentation, GitHub repository, personal homepage, and Telegram community, followed by a subtle Star reminder at the very bottom. All links open in a new tab.
+The extension preserves GitHub's native loading state and applies colors, dates, and sorting before the real content first appears, reducing visible flashes.
 
-## Update the extension
+![Chrome extension repository preview](../img/screenshots/repository-overview-light.png)
 
-Chrome extensions installed through an official channel update through that channel. Saved settings are preserved.
+## Settings entry points
+
+- Click the GitHub Freshness icon in the Chrome toolbar.
+- Click the GitHub Freshness icon after the Code button on a repository page.
+- Click the GitHub Freshness icon in the sorting controls on a search page.
+
+The settings panel manages light and dark color configurations, freshness periods, text and file icon colors, date formatting, file sorting, language, and JSON backups.
+
+![Chrome extension settings panel](../img/screenshots/settings-panel.png)
+
+## Extension updates
+
+After approval and installation from the Chrome Web Store, the extension will update through the store. Updating does not intentionally clear saved settings.
 
 ## Settings backup
 
-The settings panel can import and export settings as a JSON file. Exports include themes, colors, freshness periods, sorting, and language preferences, but never include the AWESOME token.
+The settings panel can import and export settings as JSON. Exports include theme, color, freshness period, sorting, and language settings, but never include the AWESOME token.
 
-When importing settings, the extension ignores any token field from older backup files and keeps the local AWESOME token. This prevents accidental replacement or disclosure of sensitive credentials.
+Imports ignore token fields in the backup and preserve the existing local AWESOME token. The page reloads after a successful import.
+
+## Permissions and privacy
+
+The extension requests only the GitHub page access, GitHub API access, active-tab access, and settings storage needed for its core features. The AWESOME token is optional and is sent only to the GitHub API when the related feature is enabled; it is never sent to a server operated by the project author.
+
+See the [Privacy Policy](./privacy/) for complete data-processing and synchronized-storage details.

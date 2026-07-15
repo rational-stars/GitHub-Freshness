@@ -1,66 +1,69 @@
-# 目录
+[简体中文](./README.md) | [English](./README_EN.md)
 
-1. [预览效果图](#预览效果图)
-2. [背景](#背景)
-3. [介绍](#介绍)
-4. [使用教程](#使用教程)
-5. [GitHub-Freshness 版本日志](#github-freshness-版本日志)
-6. [声明](#声明)
-7. [Star History](#star-history)
-8. [TG交流群](#tg交流群)
+![GitHub Freshness](./docs/img/github-freshness-marquee.png)
 
----
-# 预览效果图
-以下效果皆可在设置界面自定义 
-# github 项目界面预览
-![github 项目界面预览](./docs/img/project.png)
+# GitHub Freshness
 
-# github 搜索界面预览
-![github 搜索界面预览](./docs/img/serch.png)
+GitHub Freshness 通过颜色标记 GitHub 仓库、文件和搜索结果的更新时间，帮助你快速判断项目是否仍在活跃维护。
 
-# github Awesome-xxx项目预览
-![github Awesome-xxx项目预览](./docs/img/awesome-xxx.png)
+项目提供 Chrome 扩展版和 Tampermonkey 油猴脚本版。Chrome 扩展已经提交 Chrome Web Store，目前正在等待审核；审核通过后会在这里补充正式安装链接。
 
-## 设置界面
-![设置](./docs/img/setting.png)
-# **背景：**
+## 主要功能
 
-作为一个喜欢在 GitHub 上寻找 JavaScript 脚本的开发者，我经常发现那些高星标的项目已经好几年没有更新，完全没有得到维护，浪费了大量的时间。为了帮助自己快速判断一个仓库是否还在更新，并查看它的最新更新时间，我开发了这个油猴脚本。我相信，很多开发者和我一样，都会遇到这种烦恼，渴望更高效地发现那些仍然活跃的项目。
+- 根据自定义“新鲜期限”标记近期和较早更新的内容。
+- 支持仓库文件列表、目录树和 GitHub 搜索结果。
+- 自定义浅色与深色主题的背景、文字和文件图标颜色。
+- 按更新时间排序文件，并可将相对时间显示为 `yyyy-MM-dd`。
+- 通过 JSON 导入、导出设置，备份文件不会包含 AWESOME token。
+- 设置面板支持中文和英文，并可在页面内快速打开。
+- 可选的 Awesome 项目增强功能会显示仓库 Star 数量和最近更新时间。
 
-# **介绍：**
+## 效果预览
 
-**GitHub Freshness** 提供 Chrome 扩展版和油猴脚本版，通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。你可以通过设置面板来自定义颜色，并根据仓库的更新时间，轻松识别哪些项目仍在维护，哪些已经被遗弃。再也不用浪费时间在过时的项目上，寻找最新更新、活跃的资源更加高效！本仓库公开油猴脚本与文档，Chrome 扩展由作者单独发布，不在公开仓库中提供扩展源码。
+### 仓库文件新鲜度
 
-## 使用教程
+![仓库文件新鲜度](./docs/img/screenshots/repository-overview-light.png)
 
-### Chrome 扩展版
+### 设置面板
 
-Chrome 扩展由作者通过官方渠道单独发布，不需要安装 Tampermonkey。公开仓库不再提供 `extension` 源码目录或“加载已解压的扩展程序”安装方式；获取说明请查看[Chrome 扩展文档](https://docs.rational-stars.top/chrome-extension.html)。
+![GitHub Freshness 设置面板](./docs/img/screenshots/settings-panel.png)
 
-### 油猴脚本版
+### Awesome-xxx 项目
 
-点击安装[油猴扩展](https://www.tampermonkey.net/index.php)插件：https://www.tampermonkey.net/index.php
+![GitHub Awesome-xxx 项目预览](./docs/img/awesome-xxx.png)
 
-**点击链接安装**[GitHub Freshness](https://greasyfork.org/zh-CN/scripts/524465-github-freshness)油猴脚本：https://greasyfork.org/zh-CN/scripts/524465-github-freshness
+更多目录树、搜索结果和深色主题截图请查看[完整效果预览](https://rational-stars.github.io/GitHub-Freshness/preview.html)。
 
-点击右上角扩展插件中的 GitHub Freshness 设置面板，然后设置喜欢的颜色、时间阈值和当前语言即可。脚本兼容 GitHub 中文和英文界面下的更新时间解析，过于简单不再赘述。
+## 安装
 
-详细使用教程点击去往[GitHub Freshness 在线文档](https://docs.rational-stars.top/)
+### Chrome 扩展
 
-# GitHub-Freshness 版本日志
-[版本日志](/docs/version-log.md)
+Chrome 扩展已提交 Chrome Web Store，目前正在等待审核。扩展源码不包含在本公开仓库中，请勿从非官方来源安装扩展文件。
 
-# TG交流群
+### Tampermonkey 脚本
 
-想要一起畅聊吹水 GitHub 使用技巧、解决bug，甚至分享你最喜欢的配色方案？快来加入我们的 [GitHub Freshness TG交流群](https://t.me/GitHubFreshness)吧！现在是群内最早的一批成员，加入后你将成为我们共同进步的一部分。无论是对脚本的想法，还是对未来功能的需求，还是参与开发，都可以在这里和大家一起讨论。让我们一起让 GitHub 更加高效！期待你的加入！
-https://t.me/GitHubFreshness
+1. 安装 [Tampermonkey](https://www.tampermonkey.net/)。
+2. 从 [Greasy Fork 安装 GitHub Freshness](https://greasyfork.org/zh-CN/scripts/524465-github-freshness)。
+3. 打开 GitHub 仓库页或搜索页，通过 GitHub Freshness 图标进入设置面板。
 
-# 声明
+## 文档与隐私
 
-Chrome 扩展版和油猴脚本版均秉承「不作恶」的原则，无需用户注册登录，不跟踪、不记录任何用户信息，无需关注公众号，不添加广告。
+- [完整文档](https://rational-stars.github.io/GitHub-Freshness/)
+- [快速开始](https://rational-stars.github.io/GitHub-Freshness/getting-started.html)
+- [功能设置](https://rational-stars.github.io/GitHub-Freshness/diy-settings/)
+- [版本日志](https://rational-stars.github.io/GitHub-Freshness/version-log.html)
+- [隐私政策](https://rational-stars.github.io/GitHub-Freshness/privacy/)
 
-油猴脚本功能皆为原创，公开源码无隐藏、混淆和加密代码，可供用户查阅学习。Chrome 扩展源码不包含在本公开仓库中。
+公开仓库包含油猴脚本和项目文档。Chrome 扩展独立发布，其源码不在本仓库公开。
 
-## Star History
+## 反馈与交流
 
-[![Star History Chart](https://api.star-history.com/svg?repos=rational-stars/GitHub-Freshness&type=Date)](https://star-history.com/#rational-stars/GitHub-Freshness&Date)
+- [GitHub Issues](https://github.com/rational-stars/GitHub-Freshness/issues)
+- [Telegram 交流群](https://t.me/GitHubFreshness)
+- [个人主页](https://home.rational-stars.top/)
+
+喜欢这个项目的话，可以在 GitHub 点一颗 Star，感谢支持。
+
+## 许可证
+
+油猴脚本和公开文档遵循 [MIT License](./LICENSE)。

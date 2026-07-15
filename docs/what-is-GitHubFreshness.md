@@ -1,18 +1,46 @@
-# 背景
+# GitHub Freshness 是什么？
 
-作为一个喜欢在 GitHub 上寻找 JavaScript 脚本的开发者，我经常发现那些高星标的项目已经好几年没有更新，完全没有得到维护，浪费了大量的时间。为了帮助自己快速判断一个仓库是否还在更新，并查看它的最新更新时间，我开发了这个油猴脚本。我相信，很多开发者和我一样，都会遇到这种烦恼，渴望更高效地发现那些仍然活跃的项目。
+![GitHub Freshness](./img/github-freshness-marquee.png)
 
-## 介绍
+GitHub Freshness 是用于 GitHub 网页的活跃度辅助工具，提供 Chrome 扩展版和 Tampermonkey 油猴脚本版。它读取当前页面中可见的更新时间，并通过颜色、日期格式和排序帮助你快速判断仓库及文件是否仍在维护。
 
-**GitHub Freshness** 是一个油猴脚本，通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。你可以通过设置面板来自定义颜色，并根据仓库的更新时间，轻松识别哪些项目仍在维护，哪些已经被遗弃。再也不用浪费时间在过时的项目上，寻找最新更新、活跃的资源更加高效！本项目脚本代码[开源地址](https://github.com/rational-stars/GitHub-Freshness)：https://github.com/rational-stars/GitHub-Freshness
+## 为什么需要它？
 
-## 声明
+高 Star 并不代表项目仍在维护。GitHub 默认展示的信息分散在仓库文件列表、提交记录和搜索结果中，GitHub Freshness 将更新时间直接转化为易于扫描的新鲜或过期颜色，让你在进入代码之前先判断项目活跃度。
 
-本脚本在任何支持油猴的浏览器皆可使用，并秉承「不作恶」的原则， 无需用户注册登录，不跟踪不记录任何用户信息，无需关注公众号，不添加广告。
+## 可以处理哪些页面？
 
-油猴脚本功能皆为原创，公开源码无隐藏、混淆和加密代码，可供用户查阅学习。Chrome 扩展源码不包含在本公开仓库中。
+### 仓库文件列表
 
-## Star History
+根据每个文件或目录的更新时间设置背景、文字和文件图标颜色，也可以格式化日期并按更新时间排序。
 
-[![Star History Chart](https://api.star-history.com/svg?repos=rational-stars/GitHub-Freshness&type=Date)](https://star-history.com/#rational-stars/GitHub-Freshness&Date)
+![仓库文件列表](./img/screenshots/repository-overview-light.png)
 
+### 仓库目录树
+
+进入子目录后继续处理左侧目录树和当前文件列表，兼容 GitHub 当前的目录浏览界面。
+
+### GitHub 搜索结果
+
+整张仓库结果卡片会根据新鲜期限着色，帮助你在大量搜索结果中优先发现近期仍在维护的项目。
+
+### Awesome-xxx 项目
+
+可选的 AWESOME 功能会读取列表中仓库的公开元数据，展示 Star 数量和最近更新时间。
+
+## 个性化设置
+
+- 分别配置浅色和深色主题。
+- 使用日、周、月或年设置新鲜期限。
+- 自定义新鲜及过期状态的背景、文字和文件图标颜色。
+- 格式化日期并排序文件。
+- 切换中文、英文或自动语言。
+- 通过 JSON 备份和恢复设置，不导出 AWESOME token。
+
+完整效果请查看[效果预览](./preview.md)，配置说明请查看[功能设置](./diy-settings/index.md)。
+
+## 版本与开源范围
+
+Chrome 扩展已经提交 Chrome Web Store，目前正在等待审核。公开仓库包含油猴脚本和项目文档；Chrome 扩展独立发布，其源码不在本仓库公开。
+
+项目遵循“不跟踪、不投放广告、不向作者服务器上传用户配置”的原则，详情请查看[隐私政策](./privacy/)。

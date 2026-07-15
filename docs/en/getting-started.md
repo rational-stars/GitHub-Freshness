@@ -1,26 +1,37 @@
 # Getting started
 
-GitHub Freshness is available as a Chrome extension and a userscript. Choose either installation method.
+GitHub Freshness is available as a Chrome extension and a Tampermonkey userscript. Both versions provide the same core features and settings.
 
 ## Chrome extension
 
-The Chrome extension does not require Tampermonkey and is distributed separately through official channels. The public repository does not include the extension source or an `extension` folder for local loading.
+The Chrome extension has been submitted to the Chrome Web Store and is currently under review. The official installation link will be added to this page after approval.
 
-See the complete [Chrome extension installation guide](./chrome-extension.md).
+The extension source is not included in the public repository. Do not install extension files from unofficial sources. See [Chrome extension](./chrome-extension.md) for more information.
 
-## Userscript
+## Tampermonkey userscript
 
-Install Tampermonkey:
+1. Install [Tampermonkey](https://www.tampermonkey.net/).
+2. Open [GitHub Freshness on Greasy Fork](https://greasyfork.org/zh-CN/scripts/524465-github-freshness).
+3. Install or update the userscript.
+4. Open a GitHub repository, repository tree, or repository search page.
 
-https://www.tampermonkey.net/index.php
+## Open the settings panel
 
-Install GitHub Freshness:
+You can open settings from these locations:
 
-https://greasyfork.org/zh-CN/scripts/524465-github-freshness
+- After installing the Chrome extension, click the GitHub Freshness browser-toolbar icon.
+- On a repository page, click the GitHub Freshness icon after the Code button.
+- On a GitHub search page, click the GitHub Freshness icon in the sorting controls.
+- With the userscript, use the Settings command in the userscript manager menu.
 
-Open the GitHub Freshness settings panel from the browser extension menu, then configure your preferred colors, freshness period, theme, and language.
+![GitHub Freshness settings panel](../img/screenshots/settings-panel.png)
 
-The default interface language is Chinese. If you use GitHub in English, set **Current language** to **Auto** or **English**. Both versions support Chinese and English GitHub pages.
+## First-time setup
 
-![img](https://cloud.rational-stars.top/file/1737448340101.png)
-![img](https://cloud.rational-stars.top/file/1739503908673.png)
+1. Choose the light or dark configuration under Theme.
+2. Set a freshness period, such as `30 days`.
+3. Choose fresh and stale colors, then enable the background, text, and file icon options you want.
+4. Select the current theme and interface language.
+5. Click Save settings. The page reloads and applies the configuration.
+
+The default interface language is Chinese. If you use GitHub in English, set Current language to Auto or English. See [Feature settings](./diy-settings/index.md) for complete details.

@@ -1,8 +1,12 @@
-![settings](../../img/setting.png)
-
 # Feature settings
 
+![GitHub Freshness settings panel](../../img/screenshots/settings-panel.png)
+
 GitHub Freshness compares each repository or file update time with your configured freshness period. Items updated within that period are treated as fresh; older items are treated as stale.
+
+## Open the settings panel
+
+On repository pages, click the GitHub Freshness icon after the Code button. On search pages, use the icon in the sorting controls. The Chrome extension can also open settings from the browser toolbar, while the userscript provides a command in the userscript manager menu.
 
 ## Theme
 
