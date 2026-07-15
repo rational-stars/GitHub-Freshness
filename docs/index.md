@@ -23,10 +23,10 @@ hero:
 features:
   - title: 兼容多种浏览器
     icon: 🌐
-    details: 提供 Chrome 扩展版和 Tampermonkey 脚本版，支持 Chrome、Firefox、Edge 等常见浏览器。
+    details: 提供单独发布的 Chrome 扩展版和开源 Tampermonkey 脚本版，支持 Chrome、Firefox、Edge 等常见浏览器。
   - title: 设置导入与导出
     icon: 💾
-    details: 使用 JSON 文件备份和恢复主题、颜色、时间阈值、排序与语言设置，AWESOME token 始终只保留在本地。
+    details: 使用 JSON 文件备份和恢复主题、颜色、新鲜期限、排序与语言设置，AWESOME token 始终只保留在本地。
   - title: 中英文界面兼容
     icon: 🌏
     details: 设置面板、菜单和弹窗支持中文与英文显示，并兼容 GitHub 中文和英文界面下的更新时间解析。
@@ -44,5 +44,5 @@ features:
     details: 对项目中文件的更新时间进行升序或降序，使用户能够更加直观地查看项目更新情况，便于管理和比较。
   - title: 时间格式化
     icon: 🗓️
-    details: 对仓库更新时间进行统一格式化（yyyy-mm-dd），便于用户快速理解和识别不同项目的更新频率。
+    details: 对仓库更新时间进行统一格式化（yyyy-MM-dd），并在设置项右侧展示当前使用的日期格式。
 ---

@@ -29,13 +29,13 @@
 
 # **介绍：**
 
-**GitHub Freshness** 提供 Chrome 扩展版和油猴脚本版，通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。你可以通过设置面板来自定义颜色，并根据仓库的更新时间，轻松识别哪些项目仍在维护，哪些已经被遗弃。再也不用浪费时间在过时的项目上，寻找最新更新、活跃的资源更加高效！本项目代码[开源地址](https://github.com/rational-stars/GitHub-Freshness)：https://github.com/rational-stars/GitHub-Freshness
+**GitHub Freshness** 提供 Chrome 扩展版和油猴脚本版，通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。你可以通过设置面板来自定义颜色，并根据仓库的更新时间，轻松识别哪些项目仍在维护，哪些已经被遗弃。再也不用浪费时间在过时的项目上，寻找最新更新、活跃的资源更加高效！本仓库公开油猴脚本与文档，Chrome 扩展由作者单独发布，不在公开仓库中提供扩展源码。
 
 ## 使用教程
 
 ### Chrome 扩展版
 
-下载项目后，在 Chrome 的 `chrome://extensions/` 中开启开发者模式，点击“加载已解压的扩展程序”，然后选择项目的 `extension` 文件夹。详细步骤请查看[Chrome 扩展安装文档](https://docs.rational-stars.top/chrome-extension.html)。
+Chrome 扩展由作者通过官方渠道单独发布，不需要安装 Tampermonkey。公开仓库不再提供 `extension` 源码目录或“加载已解压的扩展程序”安装方式；获取说明请查看[Chrome 扩展文档](https://docs.rational-stars.top/chrome-extension.html)。
 
 ### 油猴脚本版
 
@@ -59,7 +59,7 @@ https://t.me/GitHubFreshness
 
 Chrome 扩展版和油猴脚本版均秉承「不作恶」的原则，无需用户注册登录，不跟踪、不记录任何用户信息，无需关注公众号，不添加广告。
 
-本系列脚本功能皆为原创， 无任何隐藏、混淆和加密代码，所有代码开源可供用户查阅学习。 不需要的用户可以无视。 
+油猴脚本功能皆为原创，公开源码无隐藏、混淆和加密代码，可供用户查阅学习。Chrome 扩展源码不包含在本公开仓库中。
 
 ## Star History
 

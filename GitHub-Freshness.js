@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Freshness
 // @namespace    http://tampermonkey.net/
-// @version      1.1.9
+// @version      2.0.0
 // @description  通过颜色高亮的方式，帮助你快速判断一个 GitHub 仓库是否在更新。
 // @description:en  Highlights GitHub repositories by freshness so you can quickly spot active projects.
 // @author       向前 https://docs.rational-stars.top/ https://github.com/rational-stars/GitHub-Freshness https://home.rational-stars.top/
@@ -45,6 +45,9 @@
           --gf-border: #344357;
           --gf-link: #58d5cc;
           color: var(--gf-text);
+          width: min(600px, calc(100% - 24px)) !important;
+          min-width: min(550px, calc(100% - 24px));
+          max-width: 600px;
           border: 1px solid var(--gf-border);
           border-radius: 12px;
           background: var(--gf-panel);
@@ -57,6 +60,8 @@
           #swal2-title {
           display: flex !important;
           gap: 10px;
+          margin: 24px 24px 14px;
+          padding: 0;
           justify-content: center;
           align-items: center;
           line-height: 1.2;
@@ -91,9 +96,9 @@
           box-sizing: border-box;
           display: grid;
           grid-template-columns: minmax(120px, 1fr) auto;
-          min-height: 52px;
+          min-height: 54px;
           margin: 0;
-          padding: 6px 25px;
+          padding: 7px 25px;
           column-gap: 18px;
           align-items: center;
           border-bottom: 1px solid rgba(52, 67, 87, .55);
@@ -105,6 +110,21 @@
           border-radius: 6px;
           background: var(--gf-control);
           color: var(--gf-text);
+          }
+          .row-box select.swal2-input{
+          padding-right: 38px;
+          border: 0;
+          appearance: none;
+          -webkit-appearance: none;
+          background-color: var(--gf-control);
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23f7fafc' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          background-size: 16px;
+          box-shadow: none;
+          }
+          .row-box select.swal2-input:focus{
+          box-shadow: 0 0 0 2px rgba(88, 213, 204, .28);
           }
           .row-box label {
           margin-right: 10px;
@@ -122,6 +142,44 @@
           align-items: center;
           justify-content: flex-end;
           }
+          [id$="-highlight-color-value"] .pickr .pcr-button,
+          [id$="-highlight-color-value"] .pickr .pcr-button::before,
+          [id$="-highlight-color-value"] .pickr .pcr-button::after{
+          border-radius: 6px 0 0 6px;
+          }
+          [id$="-grey-color-value"] .pickr .pcr-button,
+          [id$="-grey-color-value"] .pickr .pcr-button::before,
+          [id$="-grey-color-value"] .pickr .pcr-button::after{
+          border-radius: 0 6px 6px 0;
+          }
+          [id$="-color-value"]{
+          position: relative;
+          display: inline-flex;
+          }
+          [id$="-color-value"]::after{
+          position: absolute;
+          z-index: 10002;
+          bottom: calc(100% + 8px);
+          left: 50%;
+          padding: 5px 8px;
+          transform: translate(-50%, 4px);
+          transition: opacity .15s ease, transform .15s ease;
+          border: 1px solid var(--gf-border);
+          border-radius: 4px;
+          background: #0d1520;
+          color: var(--gf-text);
+          content: attr(data-color-tooltip);
+          font-size: 12px;
+          line-height: 1.2;
+          white-space: nowrap;
+          opacity: 0;
+          pointer-events: none;
+          }
+          [id$="-color-value"]:hover::after,
+          [id$="-color-value"]:focus-within::after{
+          transform: translate(-50%, 0);
+          opacity: 1;
+          }
           .row-box main input{
           width: 70px;
           border: unset;
@@ -132,9 +190,65 @@
           #TIME_BOUNDARY-number{
           margin-right: 8px;
           }
+          .github-freshness-format-value{
+          box-sizing: border-box;
+          display: inline-flex;
+          min-width: 136px;
+          max-width: 100%;
+          height: 40px;
+          padding: 0 14px;
+          align-items: center;
+          justify-content: center;
+          border: 0;
+          border-radius: 6px;
+          background: var(--gf-control);
+          color: var(--gf-text);
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          font-size: 14px;
+          line-height: 1;
+          white-space: nowrap;
+          }
           .github-freshness-secret-input{
           -webkit-text-security: disc;
           text-security: disc;
+          }
+          .github-freshness-control-width{
+          box-sizing: border-box;
+          width: 136px !important;
+          }
+          .github-freshness-tooltip-link{
+          position: relative;
+          display: inline-block;
+          text-decoration: none;
+          }
+          .github-freshness-tooltip-link::after{
+          position: absolute;
+          z-index: 10005;
+          bottom: calc(100% + 8px);
+          left: 0;
+          box-sizing: border-box;
+          width: max-content;
+          max-width: min(280px, calc(100vw - 48px));
+          padding: 6px 9px;
+          transform: translateY(4px);
+          transition: opacity .15s ease, transform .15s ease;
+          border: 1px solid var(--gf-border);
+          border-radius: 4px;
+          background: #0d1520;
+          color: var(--gf-text);
+          content: attr(data-tooltip);
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 1.45;
+          text-align: left;
+          white-space: normal;
+          opacity: 0;
+          pointer-events: none;
+          }
+          .github-freshness-tooltip-link:hover::after,
+          .github-freshness-tooltip-link:focus-visible::after{
+          transform: translateY(0);
+          opacity: 1;
           }
           .row-box input[type="checkbox"]{
           accent-color: var(--gf-primary);
@@ -144,6 +258,69 @@
           }
           .swal2-html-container a{
           color: var(--gf-link);
+          }
+          .github-freshness-star-reminder{
+          margin: 0 24px 20px;
+          color: var(--gf-muted);
+          font-size: 12px;
+          line-height: 1.5;
+          text-align: center;
+          animation-name: github-freshness-shake-y;
+          animation-duration: 1s;
+          animation-fill-mode: both;
+          }
+          .github-freshness-footer-links{
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          justify-content: center;
+          }
+          .github-freshness-footer-link{
+          display: inline-flex;
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+          color: var(--gf-muted);
+          }
+          .github-freshness-footer-link:hover,
+          .github-freshness-footer-link:focus-visible{
+          background: var(--gf-control);
+          color: var(--gf-link);
+          outline: none;
+          }
+          .github-freshness-footer-link svg{
+          width: 18px;
+          height: 18px;
+          }
+          .github-freshness-star-reminder a{
+          color: var(--gf-link);
+          font-weight: 600;
+          text-decoration: none;
+          }
+          .github-freshness-star-reminder a:hover{
+          text-decoration: underline;
+          }
+          @keyframes github-freshness-shake-y{
+          from, to { transform: translate3d(0, 0, 0); }
+          10%, 30%, 50%, 70%, 90% { transform: translate3d(0, -10px, 0); }
+          20%, 40%, 60%, 80% { transform: translate3d(0, 10px, 0); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+          .github-freshness-star-reminder{ animation: none; }
+          }
+          .swal2-popup.swal2-modal.swal2-show .swal2-footer{
+          display: flex;
+          margin: 26px 0 12px;
+          padding: 0 24px;
+          flex-direction: column;
+          gap: 12px;
+          border-top: 0;
+          }
+          .swal2-popup.swal2-modal.swal2-show .swal2-actions{
+          margin-top: 24px;
           }
           .github-freshness-transfer-actions{
           display: flex;
@@ -182,8 +359,8 @@
           width: 32px;
           height: 32px;
           flex: 0 0 32px;
-          margin-left: 8px;
-          padding: 4px;
+          margin-left: 0;
+          padding: 0;
           align-items: center;
           justify-content: center;
           border: 1px solid var(--button-default-borderColor-rest, var(--color-btn-border));
@@ -197,8 +374,20 @@
           }
           .github-freshness-toolbar-button img{
           display: block;
-          width: 22px;
-          height: 22px;
+          width: 100%;
+          height: 100%;
+          border-radius: 5px;
+          }
+          .github-freshness-toolbar-button.github-freshness-search-toolbar-button{
+          width: 28px;
+          height: 28px;
+          flex-basis: 28px;
+          margin-left: 8px;
+          padding: 0;
+          }
+          .github-freshness-toolbar-button.github-freshness-search-toolbar-button img{
+          width: 100%;
+          height: 100%;
           border-radius: 5px;
           }
           @media (max-width: 480px) {
@@ -233,14 +422,16 @@
     zh: {
       settings: 'GitHub 新鲜度设置',
       themeSettings: '主题设置:',
-      timeBoundary: '时间阈值:',
+      timeBoundary: '新鲜期限:',
       day: '日',
       week: '周',
       month: '月',
       year: '年',
       backgroundColor: '背景颜色:',
-      fontColor: '字体颜色:',
-      directoryColor: '文件夹颜色:',
+      fontColor: '文字颜色:',
+      directoryColor: '文件图标:',
+      freshColor: '新鲜颜色',
+      staleColor: '过期颜色',
       timeFormat: '时间格式化:',
       fileSort: '文件排序:',
       sortAsc: '时间正序',
@@ -252,8 +443,14 @@
       dark: '深色',
       chinese: '中文',
       english: '英文',
-      awesomeToken: 'AWESOME token: ',
-      settingsHint: '当复选框切换到未勾选状态时，部分设置不会立即生效需重新刷新页面。AWESOME谨慎开启详细说明请看',
+      awesomeLabel: 'AWESOME',
+      tokenLabel: 'token',
+      awesomeTooltip: 'AWESOME 功能请谨慎开启，点击查看文档',
+      tokenTooltip: '点击去往令牌生成页面',
+      footerDocs: '文档',
+      footerGitHub: 'GitHub 仓库',
+      footerHome: '个人主页',
+      footerTelegram: '交流群',
       docs: '文档',
       cancel: '取消',
       saveSettings: '保存设置',
@@ -268,18 +465,23 @@
       menuSettings: '⚙️ 设置面板',
       openSettings: '打开 GitHub 新鲜度设置',
       starMessage: '如果您觉得 GitHub-Freshness 好用，点击下方 GitHub 链接给个 star 吧。非常感谢你！！！',
+      starReminderBefore: '喜欢这个项目？',
+      starReminderLink: '点击这里',
+      starReminderAfter: '给个 Star，感谢支持。',
     },
     en: {
       settings: 'GitHub Freshness Settings',
       themeSettings: 'Theme:',
-      timeBoundary: 'Time threshold:',
+      timeBoundary: 'Freshness period:',
       day: 'Day',
       week: 'Week',
       month: 'Month',
       year: 'Year',
       backgroundColor: 'Background color:',
-      fontColor: 'Font color:',
-      directoryColor: 'Folder color:',
+      fontColor: 'Text color:',
+      directoryColor: 'File icons:',
+      freshColor: 'Fresh color',
+      staleColor: 'Stale color',
       timeFormat: 'Date formatting:',
       fileSort: 'File sorting:',
       sortAsc: 'Oldest first',
@@ -291,8 +493,14 @@
       dark: 'Dark',
       chinese: 'Chinese',
       english: 'English',
-      awesomeToken: 'AWESOME token: ',
-      settingsHint: 'Some settings require refreshing the page after being disabled. Read the AWESOME details in the',
+      awesomeLabel: 'AWESOME',
+      tokenLabel: 'token',
+      awesomeTooltip: 'Enable AWESOME with care. Click to view the documentation',
+      tokenTooltip: 'Click to open the token creation page',
+      footerDocs: 'Documentation',
+      footerGitHub: 'GitHub repository',
+      footerHome: 'Personal homepage',
+      footerTelegram: 'Community group',
       docs: 'docs',
       cancel: 'Cancel',
       saveSettings: 'Save settings',
@@ -307,6 +515,9 @@
       menuSettings: '⚙️ Settings',
       openSettings: 'Open GitHub Freshness settings',
       starMessage: 'If GitHub-Freshness helps you, please give it a star from the GitHub link below. Thank you!',
+      starReminderBefore: 'Enjoying this project? ',
+      starReminderLink: 'Click here',
+      starReminderAfter: ' to give it a Star. Thank you for your support.',
     },
   }
   function tFor(key, language = CURRENT_LANGUAGE) {
@@ -315,6 +526,36 @@
   }
   function t(key) {
     return tFor(key)
+  }
+  function getStarReminderDom(language = CURRENT_LANGUAGE) {
+    const tr = (key) => tFor(key, language)
+    return `${tr('starReminderBefore')}<a target="_blank" rel="noopener noreferrer" href="https://github.com/rational-stars/GitHub-Freshness">${tr('starReminderLink')}</a>${tr('starReminderAfter')}`
+  }
+  function getAwesomeLabelDom(language = CURRENT_LANGUAGE) {
+    const tr = (key) => tFor(key, language)
+    return `<a class="github-freshness-tooltip-link" target="_blank" rel="noopener noreferrer" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html" data-tooltip="${tr('awesomeTooltip')}" aria-label="${tr('awesomeTooltip')}">${tr('awesomeLabel')}</a> <a class="github-freshness-tooltip-link" target="_blank" rel="noopener noreferrer" href="https://github.com/settings/tokens" data-tooltip="${tr('tokenTooltip')}" aria-label="${tr('tokenTooltip')}">${tr('tokenLabel')}</a>:`
+  }
+  function getSettingsFooterDom(language = CURRENT_LANGUAGE) {
+    const tr = (key) => tFor(key, language)
+    return `
+      <div class="github-freshness-footer-links">
+        <a class="github-freshness-tooltip-link github-freshness-footer-link" target="_blank" rel="noopener noreferrer" href="https://docs.rational-stars.top/" data-tooltip="${tr('footerDocs')}" aria-label="${tr('footerDocs')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V5a2 2 0 0 1 2-2h5a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3Z"/><path d="M21 18a1 1 0 0 0 1-1V5a2 2 0 0 0-2-2h-5a3 3 0 0 0-3 3v15a3 3 0 0 1 3-3Z"/></svg>
+        </a>
+        <a class="github-freshness-tooltip-link github-freshness-footer-link" target="_blank" rel="noopener noreferrer" href="https://github.com/rational-stars/GitHub-Freshness" data-tooltip="${tr('footerGitHub')}" aria-label="${tr('footerGitHub')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3 0 6.8-2 6.8-5.5A4.5 4.5 0 0 0 19.5 6 4.2 4.2 0 0 0 19.4 3S18.4 2.7 16 4.5a13.4 13.4 0 0 0-7 0C6.6 2.7 5.6 3 5.6 3A4.2 4.2 0 0 0 5.5 6a4.5 4.5 0 0 0-1.3 3c0 3.5 3.5 5.5 6.8 5.5-.4.5-.8 1.4-1 2.5-3 .5-3-1.5-4-2l-2-1.5"/><path d="M9 18c-4.5 2-5-2-7-2"/></svg>
+        </a>
+        <a class="github-freshness-tooltip-link github-freshness-footer-link" target="_blank" rel="noopener noreferrer" href="https://home.rational-stars.top/" data-tooltip="${tr('footerHome')}" aria-label="${tr('footerHome')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-9 9 9"/><path d="M5 10v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10"/><path d="M9 22V12h6v10"/></svg>
+        </a>
+        <a class="github-freshness-tooltip-link github-freshness-footer-link" target="_blank" rel="noopener noreferrer" href="https://t.me/GitHubFreshness" data-tooltip="${tr('footerTelegram')}" aria-label="${tr('footerTelegram')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        </a>
+      </div>
+    `
+  }
+  function getStarReminderElementDom(language = CURRENT_LANGUAGE) {
+    return `<p id="STAR-reminder" class="github-freshness-star-reminder">${getStarReminderDom(language)}</p>`
   }
   function getPanelDom() {
     return `
@@ -387,6 +628,9 @@
                       <label id="TIME_FORMAT-label">${t('timeFormat')}</label>
                       <input type="checkbox" id="TIME_FORMAT-enabled">
                   </div>
+                  <main>
+                      <code class="github-freshness-format-value">yyyy-MM-dd</code>
+                  </main>
               </div>
               <div class="row-box">
                    <div>
@@ -394,10 +638,20 @@
                       <input type="checkbox" id="SORT-enabled">
                   </div>
                   <main>
-                      <select tabindex="-1" id="SORT-select" class="swal2-input">
+                      <select tabindex="-1" id="SORT-select" class="swal2-input github-freshness-control-width">
                           <option value="asc">${t('sortAsc')}</option>
                           <option value="desc">${t('sortDesc')}</option>
                       </select>
+                  </main>
+              </div>
+
+              <div class="row-box">
+                  <div>
+                      <label id="AWESOME-label">${getAwesomeLabelDom()}</label>
+                      <input type="checkbox" id="AWESOME-enabled">
+                  </div>
+                  <main>
+                      <input id="AWESOME_TOKEN" type="text" class="swal2-input github-freshness-secret-input github-freshness-control-width" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
                   </main>
               </div>
 
@@ -432,28 +686,17 @@
                   </main>
               </div>
 
-              <div class="row-box">
-                  <div>
-                      <label id="AWESOME-label"><a target="_blank" href="https://github.com/settings/tokens">${t('awesomeToken')}</a></label>
-                      <input type="checkbox" id="AWESOME-enabled">
-                  </div>
-                  <main>
-                      <input id="AWESOME_TOKEN" type="text" class="swal2-input github-freshness-secret-input" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
-                  </main>
-              </div>
-            <p id="SETTINGS-hint">${t('settingsHint')} <a target="_blank" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html">${t('docs')}</a></p>
-
           `
   }
   // === 配置项 ===
   let default_THEME = {
     BGC: {
       highlightColor: 'rgba(15, 172, 83, 1)', // 高亮颜色（示例：金色）
-      greyColor: 'rgba(245, 245, 245, 0.24)', // 灰色（示例：深灰）
+      greyColor: 'rgba(108, 183, 140, 1)', // 灰色（示例：深灰）
       isEnabled: true, // 是否启用背景色
     },
     TIME_BOUNDARY: {
-      number: 30, // 时间阈值（示例：30）
+      number: '30', // 时间阈值（示例：30）
       select: 'day', // 可能的值: "day", "week", "month", "year"
     },
     FONT: {
@@ -463,7 +706,7 @@
     },
     DIR: {
       highlightColor: 'rgba(15, 172, 83, 1)', // 目录高亮颜色（示例：道奇蓝）
-      greyColor: 'rgba(154, 154, 154, 1)', // 灰色（示例：暗灰）
+      greyColor: 'rgba(108, 183, 140, 1)', // 灰色（示例：暗灰）
       isEnabled: true, // 是否启用文件夹颜色
     },
     SORT: {
@@ -477,17 +720,33 @@
       isEnabled: true, // 是否启用时间格式化
     },
   }
-  let CURRENT_THEME = GM_getValue('CURRENT_THEME', 'light')
+  const default_DARK_THEME = JSON.parse(JSON.stringify(default_THEME))
+  default_DARK_THEME.BGC.highlightColor = 'rgba(25, 44, 226, 1)'
+  default_DARK_THEME.BGC.greyColor = 'rgba(112, 147, 194, 1)'
+  default_DARK_THEME.DIR.highlightColor = 'rgba(25, 44, 226, 1)'
+  default_DARK_THEME.DIR.greyColor = 'rgba(112, 147, 194, 1)'
+  const default_CONFIG = { light: default_THEME, dark: default_DARK_THEME }
+  let CURRENT_THEME = GM_getValue('CURRENT_THEME', 'auto')
   let AWESOME_TOKEN = GM_getValue('AWESOME_TOKEN', '')
+  let AWESOME_ENABLED = GM_getValue('AWESOME_ENABLED', null)
   let THEME_TYPE = getThemeType()
   let config_JSON = normalizeConfig(
-    JSON.parse(GM_getValue('config_JSON', JSON.stringify({ light: default_THEME })))
+    JSON.parse(GM_getValue('config_JSON', JSON.stringify(default_CONFIG)))
   )
   let THEME = getThemeConfig(THEME_TYPE) // 当前主题
+  if (typeof AWESOME_ENABLED !== 'boolean') {
+    AWESOME_ENABLED = Boolean(THEME.AWESOME.isEnabled)
+  }
   const DEBUG = GM_getValue('DEBUG', false)
   const PROCESSED_ATTR = 'data-github-freshness'
   const CODE_BUTTON_ATTR = 'data-github-freshness-code-button'
   const TOOLBAR_SETTINGS_ID = 'github-freshness-toolbar-settings'
+  const SEARCH_TEXT_SELECTOR = [
+    '[class*="Content-module__Content"]',
+    '[class*="Content-module__Content"] *',
+    '[class*="Footer-module__footer"]',
+    '[class*="Footer-module__footer"] *',
+  ].join(',')
   const AWESOME_OBSERVED_ATTR = 'data-github-freshness-awesome-observed'
   const AWESOME_PROCESSED_ATTR = 'data-github-freshness-awesome-processed'
   const awesomeRepoCache = new Map()
@@ -511,6 +770,9 @@
       },
     },
   }
+  const pickrInstances = new Map()
+  let settingsThemeDrafts = null
+  let settingsEditingTheme = null
   function getThemeType() {
     let themeType = CURRENT_THEME
     if (CURRENT_THEME === 'auto') {
@@ -553,22 +815,41 @@
     return { ...config, light, dark }
   }
   function getThemeConfig(themeType = THEME_TYPE) {
-    return normalizeTheme(config_JSON[themeType] || config_JSON.light || default_THEME)
+    const theme = normalizeTheme(config_JSON[themeType] || config_JSON.light || default_THEME)
+    if (typeof AWESOME_ENABLED === 'boolean') theme.AWESOME.isEnabled = AWESOME_ENABLED
+    return theme
   }
-  function initPickr(el_default) {
-    const pickr = Pickr.create({ ...configPickr, ...el_default })
+  function syncAwesomeEnabled(config, isEnabled) {
+    const normalizedConfig = normalizeConfig(config)
+    for (const themeName of ['light', 'dark']) {
+      normalizedConfig[themeName].AWESOME.isEnabled = isEnabled
+    }
+    return normalizedConfig
+  }
+  function initPickr(key, options) {
+    pickrInstances.get(key)?.destroyAndRemove()
+    const pickr = Pickr.create({ ...configPickr, ...options })
     watchPickr(pickr)
+    pickrInstances.set(key, pickr)
+    return pickr
   }
-  function watchPickr(pickrName, el) {
-    pickrName.on('save', (color, instance) => {
-      pickrName.hide()
-    })
+  function watchPickr(pickr) {
+    pickr.on('save', () => pickr.hide())
   }
-  const preConfirm = () => {
-    // 遍历默认主题配置，更新设置
-    const updated_THEME = getUpdatedThemeConfig(default_THEME)
+  function destroyPickrs() {
+    for (const pickr of pickrInstances.values()) pickr.destroyAndRemove()
+    pickrInstances.clear()
+  }
+  function destroySettingsPanelState() {
+    destroyPickrs()
+    settingsThemeDrafts = null
+    settingsEditingTheme = null
+  }
+  const preConfirm = async () => {
+    captureSettingsThemeDraft()
     CURRENT_THEME = $('#CURRENT_THEME-select').val()
     CURRENT_LANGUAGE = $('#LANGUAGE-select').val()
+    AWESOME_ENABLED = $('#AWESOME-enabled').prop('checked')
     const previousAwesomeToken = AWESOME_TOKEN
     AWESOME_TOKEN = $('#AWESOME_TOKEN').val()
     if (AWESOME_TOKEN !== previousAwesomeToken) {
@@ -576,17 +857,20 @@
       awesomeRateLimitWarned = false
     }
     // 保存到油猴存储
-    config_JSON = normalizeConfig({
+    config_JSON = syncAwesomeEnabled({
       ...config_JSON,
-      [$('#THEME-select').val()]: updated_THEME,
-    })
+      light: settingsThemeDrafts.light,
+      dark: settingsThemeDrafts.dark,
+    }, AWESOME_ENABLED)
     GM_setValue('config_JSON', JSON.stringify(config_JSON))
     GM_setValue('CURRENT_THEME', CURRENT_THEME)
     GM_setValue('CURRENT_LANGUAGE', CURRENT_LANGUAGE)
     GM_setValue('AWESOME_TOKEN', AWESOME_TOKEN)
-    THEME = updated_THEME // 更新当前主题
-    GitHub_Freshness(updated_THEME)
-    Swal.fire({
+    GM_setValue('AWESOME_ENABLED', AWESOME_ENABLED)
+    THEME_TYPE = getThemeType()
+    THEME = getThemeConfig(THEME_TYPE)
+    GitHub_Freshness(THEME)
+    await Swal.fire({
       position: 'top',
       background: '#151e2b',
       color: '#f7fafc',
@@ -596,28 +880,38 @@
       showConfirmButton: false,
       timer: 800,
     })
+    window.location.reload()
   }
-  function initSettings(theme) {
-    initPickr({
+  function initSettings() {
+    destroyPickrs()
+    settingsThemeDrafts = {
+      light: getThemeConfig('light'),
+      dark: getThemeConfig('dark'),
+    }
+    settingsEditingTheme = getThemeType()
+    const theme = settingsThemeDrafts[settingsEditingTheme]
+    initPickr('BGC.highlightColor', {
       el: '#BGC-highlight-color-pickr',
       default: theme.BGC.highlightColor,
     })
-    initPickr({ el: '#BGC-grey-color-pickr', default: theme.BGC.greyColor })
-    initPickr({
+    initPickr('BGC.greyColor', { el: '#BGC-grey-color-pickr', default: theme.BGC.greyColor })
+    initPickr('FONT.highlightColor', {
       el: '#FONT-highlight-color-pickr',
       default: theme.FONT.highlightColor,
     })
-    initPickr({ el: '#FONT-grey-color-pickr', default: theme.FONT.greyColor })
-    initPickr({
+    initPickr('FONT.greyColor', { el: '#FONT-grey-color-pickr', default: theme.FONT.greyColor })
+    initPickr('DIR.highlightColor', {
       el: '#DIR-highlight-color-pickr',
       default: theme.DIR.highlightColor,
     })
-    initPickr({ el: '#DIR-grey-color-pickr', default: theme.DIR.greyColor })
-    $('#THEME-select').val(getThemeType())
+    initPickr('DIR.greyColor', { el: '#DIR-grey-color-pickr', default: theme.DIR.greyColor })
+    $('#THEME-select').val(settingsEditingTheme)
     $('#CURRENT_THEME-select').val(CURRENT_THEME)
     $('#LANGUAGE-select').val(CURRENT_LANGUAGE)
     $('#AWESOME_TOKEN').val(AWESOME_TOKEN)
     handelData(theme)
+    $('#AWESOME-enabled').prop('checked', AWESOME_ENABLED)
+    updateColorPickerLabels()
   }
   function getUpdatedThemeConfig() {
     // 创建一个新的对象，用于存储更新后的主题配置
@@ -631,15 +925,19 @@
         switch (key) {
           case 'highlightColor':
             // 获取高亮颜色（示例：金色、道奇蓝等）
-            val = $(`#${themeKey}-highlight-color-value .pcr-button`).css(
-              '--pcr-color'
-            )
+            val = pickrInstances
+              .get(`${themeKey}.highlightColor`)
+              ?.getColor()
+              ?.toRGBA()
+              .toString(3) || val
             break
           case 'greyColor':
             // 获取灰色调（示例：深灰、标准灰、暗灰等）
-            val = $(`#${themeKey}-grey-color-value .pcr-button`).css(
-              '--pcr-color'
-            )
+            val = pickrInstances
+              .get(`${themeKey}.greyColor`)
+              ?.getColor()
+              ?.toRGBA()
+              .toString(3) || val
             break
           case 'isEnabled':
             // 判断该主题项是否启用
@@ -665,24 +963,30 @@
 
     return updatedTheme
   }
+  function captureSettingsThemeDraft() {
+    if (!settingsThemeDrafts || !settingsEditingTheme) return
+    const draft = getUpdatedThemeConfig()
+    draft.AWESOME.isEnabled = $('#AWESOME-enabled').prop('checked')
+    settingsThemeDrafts[settingsEditingTheme] = draft
+  }
   function handelData(theme) {
     for (const [themeKey, themeVal] of Object.entries(theme)) {
       for (const [key, val] of Object.entries(themeVal)) {
         switch (key) {
           case 'highlightColor':
-            $(`#${themeKey}-highlight-color-value .pcr-button`).css(
-              '--pcr-color',
-              val
-            )
+            pickrInstances
+              .get(`${themeKey}.highlightColor`)
+              ?.setColor(val, false)
             break
           case 'greyColor':
-            $(`#${themeKey}-grey-color-value .pcr-button`).css(
-              '--pcr-color',
-              val
-            )
+            pickrInstances
+              .get(`${themeKey}.greyColor`)
+              ?.setColor(val, false)
             break
           case 'isEnabled':
-            $(`#${themeKey}-enabled`).prop('checked', val) // 选中
+            if (themeKey !== 'AWESOME') {
+              $(`#${themeKey}-enabled`).prop('checked', val) // 选中
+            }
             break
           case 'number':
             $(`#${themeKey}-number`).val(val)
@@ -709,7 +1013,7 @@
     $('#CURRENT_THEME-label').text(tr('currentTheme'))
     $('#LANGUAGE-label').text(tr('currentLanguage'))
     $('#SETTINGS_TRANSFER-label').text(tr('settingsTransfer'))
-    $('#AWESOME-label a').text(tr('awesomeToken'))
+    $('#AWESOME-label').html(getAwesomeLabelDom(language))
 
     $('#THEME-select option[value="light"]').text(tr('light'))
     $('#THEME-select option[value="dark"]').text(tr('dark'))
@@ -727,19 +1031,39 @@
     $('#LANGUAGE-select option[value="en"]').text(tr('english'))
     $('#SETTINGS-import').text(tr('importSettings'))
     $('#SETTINGS-export').text(tr('exportSettings'))
-    $('#SETTINGS-hint').html(`${tr('settingsHint')} <a target="_blank" href="https://docs.rational-stars.top/diy-settings/awesome-xxx.html">${tr('docs')}</a>`)
+    $('.swal2-footer').html(getSettingsFooterDom(language))
+    $('#STAR-reminder').html(getStarReminderDom(language))
+    updateColorPickerLabels(language)
     $('.swal2-confirm').text(tr('saveSettings'))
     $('.swal2-cancel').text(tr('cancel'))
   }
+  function updateColorPickerLabels(language = CURRENT_LANGUAGE) {
+    const tr = (key) => tFor(key, language)
+    $('[id$="-highlight-color-value"] .pcr-button')
+      .attr('title', tr('freshColor'))
+      .attr('aria-label', tr('freshColor'))
+    $('[id$="-highlight-color-value"]')
+      .attr('data-color-tooltip', tr('freshColor'))
+    $('[id$="-grey-color-value"] .pcr-button')
+      .attr('title', tr('staleColor'))
+      .attr('aria-label', tr('staleColor'))
+    $('[id$="-grey-color-value"]')
+      .attr('data-color-tooltip', tr('staleColor'))
+  }
   function getSettingsFromPanel() {
+    captureSettingsThemeDraft()
+    const awesomeEnabled = $('#AWESOME-enabled').prop('checked')
+    const config = syncAwesomeEnabled({
+      ...config_JSON,
+      light: settingsThemeDrafts.light,
+      dark: settingsThemeDrafts.dark,
+    }, awesomeEnabled)
     return {
       schemaVersion: 1,
-      config_JSON: normalizeConfig({
-        ...config_JSON,
-        [$('#THEME-select').val()]: getUpdatedThemeConfig(),
-      }),
+      config_JSON: config,
       CURRENT_THEME: $('#CURRENT_THEME-select').val() || CURRENT_THEME,
       CURRENT_LANGUAGE: $('#LANGUAGE-select').val() || CURRENT_LANGUAGE,
+      AWESOME_ENABLED: awesomeEnabled,
     }
   }
   function exportSettings() {
@@ -782,10 +1106,22 @@
     const currentTheme = ['auto', 'light', 'dark'].includes(value.CURRENT_THEME)
       ? value.CURRENT_THEME
       : 'light'
+    const hasAwesomeEnabled = Object.prototype.hasOwnProperty.call(value, 'AWESOME_ENABLED')
+    if (hasAwesomeEnabled && typeof value.AWESOME_ENABLED !== 'boolean') {
+      throw new Error('Invalid AWESOME_ENABLED')
+    }
+    const normalizedConfig = normalizeConfig(importedConfig)
+    const effectiveTheme = currentTheme === 'auto'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : currentTheme
+    const awesomeEnabled = hasAwesomeEnabled
+      ? value.AWESOME_ENABLED
+      : Boolean(normalizedConfig[effectiveTheme].AWESOME.isEnabled)
     return {
-      config_JSON: normalizeConfig(importedConfig),
+      config_JSON: syncAwesomeEnabled(normalizedConfig, awesomeEnabled),
       CURRENT_THEME: currentTheme,
       CURRENT_LANGUAGE: hasLanguage ? value.CURRENT_LANGUAGE : CURRENT_LANGUAGE,
+      AWESOME_ENABLED: awesomeEnabled,
       hasLanguage,
     }
   }
@@ -794,6 +1130,7 @@
       const settings = normalizeImportedSettings(JSON.parse(await file.text()))
       GM_setValue('config_JSON', JSON.stringify(settings.config_JSON))
       GM_setValue('CURRENT_THEME', settings.CURRENT_THEME)
+      GM_setValue('AWESOME_ENABLED', settings.AWESOME_ENABLED)
       if (settings.hasLanguage) GM_setValue('CURRENT_LANGUAGE', settings.CURRENT_LANGUAGE)
       const effectiveLanguage = settings.hasLanguage ? settings.CURRENT_LANGUAGE : CURRENT_LANGUAGE
       await Swal.fire({
@@ -817,21 +1154,26 @@
     Swal.fire({
       title: `<a target="_blank" tabindex="-1" id="swal2-title-div" href="https://home.rational-stars.top/"><img src="${SETTINGS_ICON_URL}" alt="GitHub Freshness"></a><a class="github-freshness-title-link" tabindex="-1" target="_blank" href="https://github.com/rational-stars/GitHub-Freshness">${t('settings')}</a>`,
       html: getPanelDom(),
+      footer: getSettingsFooterDom(),
       focusConfirm: false,
       preConfirm,
+      didClose: destroySettingsPanelState,
       heightAuto: false,
       showCancelButton: true,
       cancelButtonText: t('cancel'),
       confirmButtonText: t('saveSettings'),
     })
 
-    initSettings(THEME)
+    $('.swal2-footer').after(getStarReminderElementDom())
+
+    initSettings()
 
     $('#THEME-select').on('change', function () {
-      let selectedTheme = $(this).val() // 获取选中的值
-      let theme = getThemeConfig(selectedTheme)
+      const selectedTheme = $(this).val()
+      captureSettingsThemeDraft()
+      settingsEditingTheme = selectedTheme
       debugLog('主题设置变更:', selectedTheme)
-      handelData(theme)
+      handelData(settingsThemeDrafts[selectedTheme])
     })
     $('#LANGUAGE-select').on('change', function () {
       updateSettingsLanguagePreview($(this).val())
@@ -863,6 +1205,20 @@
     })
     button.removeAttr(CODE_BUTTON_ATTR)
   }
+  function getToolbarSettingsButton() {
+    let settingsButton = document.getElementById(TOOLBAR_SETTINGS_ID)
+    if (!settingsButton) {
+      settingsButton = document.createElement('button')
+      settingsButton.type = 'button'
+      settingsButton.id = TOOLBAR_SETTINGS_ID
+      settingsButton.className = 'github-freshness-toolbar-button'
+      settingsButton.innerHTML = `<img src="${SETTINGS_ICON_URL}" alt="">`
+      settingsButton.addEventListener('click', createSettingsPanel)
+    }
+    settingsButton.title = t('openSettings')
+    settingsButton.setAttribute('aria-label', t('openSettings'))
+    return settingsButton
+  }
   function setupRepoToolbar(theme = THEME) {
     const codeButton = getRepoCodeButton()
     if (!codeButton.length) return false
@@ -883,19 +1239,23 @@
 
     const details = codeButton.closest('details')
     const anchor = details.length ? details[0] : codeButton[0]
-    let settingsButton = document.getElementById(TOOLBAR_SETTINGS_ID)
-    if (!settingsButton) {
-      settingsButton = document.createElement('button')
-      settingsButton.type = 'button'
-      settingsButton.id = TOOLBAR_SETTINGS_ID
-      settingsButton.className = 'github-freshness-toolbar-button'
-      settingsButton.innerHTML = `<img src="${SETTINGS_ICON_URL}" alt="">`
-      settingsButton.addEventListener('click', createSettingsPanel)
-    }
-    settingsButton.title = t('openSettings')
-    settingsButton.setAttribute('aria-label', t('openSettings'))
+    const settingsButton = getToolbarSettingsButton()
+    settingsButton.classList.remove('github-freshness-search-toolbar-button')
     if (anchor.nextElementSibling !== settingsButton) {
       anchor.insertAdjacentElement('afterend', settingsButton)
+    }
+    return true
+  }
+  function setupSearchToolbar() {
+    const controls = document.querySelector(
+      '[data-testid="search-sub-header"] [class*="SearchSubHeader-module__controlsWrapper"]'
+    )
+    if (!controls) return false
+
+    const settingsButton = getToolbarSettingsButton()
+    settingsButton.classList.add('github-freshness-search-toolbar-button')
+    if (settingsButton.parentElement !== controls || controls.lastElementChild !== settingsButton) {
+      controls.appendChild(settingsButton)
     }
     return true
   }
@@ -943,6 +1303,19 @@
         el.css('color', FONT.greyColor)
       }
     }
+  }
+  function setSearchResultFONT(result, FONT, timeResult) {
+    if (!result.length) return
+    const targets = result.find(SEARCH_TEXT_SELECTOR)
+    targets.each(function () {
+      this.style.removeProperty('color')
+    })
+    if (!FONT.isEnabled) return
+
+    const color = timeResult ? FONT.highlightColor : FONT.greyColor
+    targets.each(function () {
+      this.style.setProperty('color', color, 'important')
+    })
   }
   function isValidDate(date) {
     return date instanceof Date && !Number.isNaN(date.getTime())
@@ -1113,6 +1486,7 @@
   }
   // === 核心函数 ===
   function GitHub_FreshnessSearchPage(theme = THEME) {
+    setupSearchToolbar()
     const elements = getSearchDateElements()
     if (elements.length === 0) return debugLog('没有找到日期元素')
     elements.each(function () {
@@ -1124,7 +1498,7 @@
         // 背景色
         setElementBGC(BGC_element, theme.BGC, timeResult)
         // 字体颜色
-        setElementFONT($(this), theme.FONT, timeResult)
+        setSearchResultFONT(BGC_element, theme.FONT, timeResult)
         // 时间格式化
         if (theme.TIME_FORMAT.isEnabled) {
           const formattedDate = formatDate(title, 'UTC')
@@ -1148,8 +1522,16 @@
     })
   }
   function getSearchResultElement(el) {
+    const result = el.closest('[class*="Result-module__Result"]')
+    if (result.length) return result
+
     const resultRow = el.closest('[class*="Repositories-module__resultRow"]')
-    if (resultRow.length) return resultRow
+    if (resultRow.length) {
+      const resultContainer = resultRow.parent().filter(function () {
+        return $(this).parent().is('[data-testid="results-list"]')
+      })
+      return resultContainer.length ? resultContainer : resultRow
+    }
 
     const resultsList = el.closest('[data-testid="results-list"]')
     return resultsList.children('div').has(el).first()
@@ -1328,6 +1710,15 @@
     const codeControl = codeIcon && codeIcon.closest('button, summary')
     return !!codeControl && codeControl.getAttribute(CODE_BUTTON_ATTR) !== 'true'
   }
+  function containsPendingSearchContent(node) {
+    if (!(node instanceof Element)) return false
+    const selector = [
+      '[data-testid="search-sub-header"]',
+      '[data-testid="results-list"]',
+      '[class*="Result-module__Result"]',
+    ].join(',')
+    return node.matches(selector) || !!node.querySelector(selector)
+  }
 // 页面加载完成后执行
 window.addEventListener('load', () => {
   debugLog("页面加载完成 => 执行 runScript");
@@ -1353,10 +1744,17 @@ document.addEventListener('turbo:render', runScript)
 document.addEventListener('turbo:load', runScript)
 
 const repositoryObserver = new MutationObserver((mutations) => {
-  if (isMatchedUrl() !== 'matchRepoPage') return
-  const shouldProcess = mutations.some((mutation) =>
-    [...mutation.addedNodes].some(containsPendingRepoContent)
-  )
+  const matchUrl = isMatchedUrl()
+  let shouldProcess = false
+  if (matchUrl === 'matchRepoPage') {
+    shouldProcess = mutations.some((mutation) =>
+      [...mutation.addedNodes].some(containsPendingRepoContent)
+    )
+  } else if (matchUrl === 'matchSearchPage') {
+    shouldProcess = mutations.some((mutation) =>
+      [...mutation.addedNodes].some(containsPendingSearchContent)
+    )
+  }
   if (!shouldProcess) return
   runScript()
 })

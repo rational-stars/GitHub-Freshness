@@ -10,10 +10,9 @@
 
 本脚本在任何支持油猴的浏览器皆可使用，并秉承「不作恶」的原则， 无需用户注册登录，不跟踪不记录任何用户信息，无需关注公众号，不添加广告。
 
-本系列脚本功能皆为原创， 无任何隐藏、混淆和加密代码，所有代码开源可供用户查阅学习。 不需要的用户可以无视。 
+油猴脚本功能皆为原创，公开源码无隐藏、混淆和加密代码，可供用户查阅学习。Chrome 扩展源码不包含在本公开仓库中。
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=rational-stars/GitHub-Freshness&type=Date)](https://star-history.com/#rational-stars/GitHub-Freshness&Date)
-
 

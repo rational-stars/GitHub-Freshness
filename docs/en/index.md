@@ -22,10 +22,10 @@ hero:
 features:
   - title: Cross-browser support
     icon: 🌐
-    details: Available as a Chrome extension and a Tampermonkey userscript for Chrome, Firefox, Edge, and other common browsers.
+    details: Available as a separately distributed Chrome extension and an open-source Tampermonkey userscript for Chrome, Firefox, Edge, and other common browsers.
   - title: Settings import and export
     icon: 💾
-    details: Back up and restore themes, colors, thresholds, sorting, and language settings as JSON while keeping the AWESOME token local.
+    details: Back up and restore themes, colors, freshness periods, sorting, and language settings as JSON while keeping the AWESOME token local.
   - title: Chinese and English compatible
     icon: 🌏
     details: The settings panel, menu, and dialogs support Chinese and English. Repository freshness parsing works on both Chinese and English GitHub pages.
@@ -40,5 +40,5 @@ features:
     details: Sort repository files and folders by update time in ascending or descending order.
   - title: Date formatting
     icon: 🗓️
-    details: Format GitHub update times as yyyy-mm-dd for easier scanning.
+    details: Format GitHub update times as yyyy-MM-dd and show the active date format in the settings row.
 ---

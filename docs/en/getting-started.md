@@ -4,7 +4,7 @@ GitHub Freshness is available as a Chrome extension and a userscript. Choose eit
 
 ## Chrome extension
 
-The Chrome extension does not require Tampermonkey. Download the project, enable Developer mode on `chrome://extensions/`, and load the project's `extension` folder.
+The Chrome extension does not require Tampermonkey and is distributed separately through official channels. The public repository does not include the extension source or an `extension` folder for local loading.
 
 See the complete [Chrome extension installation guide](./chrome-extension.md).
 
@@ -18,7 +18,7 @@ Install GitHub Freshness:
 
 https://greasyfork.org/zh-CN/scripts/524465-github-freshness
 
-Open the GitHub Freshness settings panel from the browser extension menu, then configure your preferred colors, time threshold, theme, and language.
+Open the GitHub Freshness settings panel from the browser extension menu, then configure your preferred colors, freshness period, theme, and language.
 
 The default interface language is Chinese. If you use GitHub in English, set **Current language** to **Auto** or **English**. Both versions support Chinese and English GitHub pages.
 
