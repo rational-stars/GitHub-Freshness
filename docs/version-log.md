@@ -5,7 +5,7 @@
 ### Chrome 扩展
 
 - 新增 Manifest V3 Chrome 扩展版，支持同步保存设置，并可通过浏览器工具栏打开设置面板。
-- Chrome 扩展改为通过官方渠道单独发布，已提交 Chrome Web Store 并正在等待审核；公开仓库不再包含扩展源码和本地加载目录。
+- Chrome 扩展改为通过官方渠道单独发布，已通过审核并在 [Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj) 正式上架；公开仓库不再包含扩展源码和本地加载目录。
 - 修复扩展重新加载后旧页面访问同步存储时可能产生的错误。
 
 ### 页面体验

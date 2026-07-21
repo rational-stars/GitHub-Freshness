@@ -23,7 +23,7 @@ hero:
 features:
   - title: 兼容多种浏览器
     icon: 🌐
-    details: 提供单独发布的 Chrome 扩展版和开源 Tampermonkey 脚本版；Chrome 扩展已提交商店，目前正在等待审核。
+    details: 提供单独发布的 Chrome 扩展版和源码可用的 Tampermonkey 脚本版；Chrome 扩展已在 Chrome Web Store 正式上架。
   - title: 设置导入与导出
     icon: 💾
     details: 使用 JSON 文件备份和恢复主题、颜色、新鲜期限、排序与语言设置，AWESOME token 始终只保留在本地。

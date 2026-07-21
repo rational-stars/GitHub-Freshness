@@ -39,8 +39,8 @@ GitHub Freshness 是用于 GitHub 网页的活跃度辅助工具，提供 Chrome
 
 完整效果请查看[效果预览](./preview.md)，配置说明请查看[功能设置](./diy-settings/index.md)。
 
-## 版本与开源范围
+## 版本与源码范围
 
-Chrome 扩展已经提交 Chrome Web Store，目前正在等待审核。公开仓库包含油猴脚本和项目文档；Chrome 扩展独立发布，其源码不在本仓库公开。
+Chrome 扩展已经在 Chrome Web Store 正式上架，可从 [Chrome Web Store 安装 GitHub Freshness](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj)。公开仓库包含源码可用的油猴脚本和项目文档；Chrome 扩展独立发布，其源码不在本仓库公开。
 
 项目遵循“不跟踪、不投放广告、不向作者服务器上传用户配置”的原则，详情请查看[隐私政策](./privacy/)。

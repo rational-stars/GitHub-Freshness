@@ -4,7 +4,7 @@
 
 [English version](../en/privacy/)
 
-GitHub Freshness 包含用于 GitHub 网页的开源油猴脚本和单独发布的浏览器扩展。它通过读取用户当前 GitHub 页面中可见的仓库及文件更新时间，并以颜色高亮、时间格式化、文件排序等方式帮助用户判断仓库活跃度。浏览器扩展源码不包含在公开仓库中。
+GitHub Freshness 包含用于 GitHub 网页的源码可用油猴脚本和单独发布的浏览器扩展。浏览器扩展已在 [Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj) 正式上架。它通过读取用户当前 GitHub 页面中可见的仓库及文件更新时间，并以颜色高亮、时间格式化、文件排序等方式帮助用户判断仓库活跃度。浏览器扩展源码不包含在公开仓库中。
 
 我们重视用户隐私。本项目不会建立用户账号系统，不会投放广告，不会跟踪用户行为，也不会出售、出租或共享用户数据用于广告、画像或营销目的。
 
