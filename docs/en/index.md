@@ -22,7 +22,7 @@ hero:
 features:
   - title: Cross-browser support
     icon: 🌐
-    details: Available as a separately distributed Chrome extension and an open-source Tampermonkey userscript. The Chrome extension is currently under store review.
+    details: Available as a separately distributed Chrome extension and a source-available Tampermonkey userscript. The Chrome extension is officially available in the Chrome Web Store.
   - title: Settings import and export
     icon: 💾
     details: Back up and restore themes, colors, freshness periods, sorting, and language settings as JSON while keeping the AWESOME token local.

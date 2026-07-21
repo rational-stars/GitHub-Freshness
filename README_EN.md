@@ -6,7 +6,7 @@
 
 GitHub Freshness highlights update times across GitHub repositories, files, and search results, helping you quickly see whether a project is still actively maintained.
 
-The project is available as a Chrome extension and a Tampermonkey userscript. The Chrome extension has been submitted to the Chrome Web Store and is currently under review. The official installation link will be added here after approval.
+The project is available as a Chrome extension and a Tampermonkey userscript. The Chrome extension is officially available in the Chrome Web Store: [Install GitHub Freshness from the Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj).
 
 ## Features
 
@@ -38,7 +38,9 @@ See the [complete preview](https://rational-stars.github.io/GitHub-Freshness/en/
 
 ### Chrome extension
 
-The Chrome extension has been submitted to the Chrome Web Store and is currently under review. Its source code is not included in this public repository. Do not install extension files from unofficial sources.
+[Install GitHub Freshness from the Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj).
+
+The Chrome extension source code is not included in this public repository. Do not install extension files from unofficial sources.
 
 ### Tampermonkey userscript
 
@@ -54,7 +56,7 @@ The Chrome extension has been submitted to the Chrome Web Store and is currently
 - [Changelog](https://rational-stars.github.io/GitHub-Freshness/en/version-log.html)
 - [Privacy Policy](https://rational-stars.github.io/GitHub-Freshness/en/privacy/)
 
-The public repository contains the userscript and project documentation. The Chrome extension is distributed separately and its source code is not published here.
+The public repository contains the source-available userscript and project documentation. The Chrome extension is distributed separately and its source code is not published here.
 
 ## Feedback and community
 
@@ -66,4 +68,10 @@ If GitHub Freshness helps you, please consider giving the repository a Star.
 
 ## License
 
-The userscript and public documentation are available under the [MIT License](./LICENSE).
+The public source code and documentation in this repository are available under the [PolyForm Noncommercial License 1.0.0](./LICENSE):
+
+- You may use them for personal study, education, research, and other noncommercial projects.
+- You may modify and redistribute them for noncommercial purposes, provided that you retain the copyright and license notices.
+- Companies, commercial organizations, and all other commercial use, including internal company use, require separate written permission.
+
+For commercial licensing, contact `rational.stars127@gmail.com`.

@@ -2,11 +2,11 @@
 
 The GitHub Freshness Chrome extension does not require Tampermonkey and provides the same core features and settings as the userscript.
 
-## Review status
+## Official installation
 
-The extension has been submitted to the Chrome Web Store and is currently under review. The official store installation link will be added to this page after approval.
+[Install GitHub Freshness from the Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj).
 
-The public [GitHub Freshness repository](https://github.com/rational-stars/GitHub-Freshness) contains only the userscript and project documentation. It does not include the Chrome extension source or an `extension` directory for local loading. Do not install extension files from unofficial sources.
+The public [GitHub Freshness repository](https://github.com/rational-stars/GitHub-Freshness) contains only the source-available userscript and project documentation. It does not include the Chrome extension source or an `extension` directory for local loading. Do not install extension files from unofficial sources.
 
 ## Supported pages
 
@@ -31,7 +31,7 @@ The settings panel manages light and dark color configurations, freshness period
 
 ## Extension updates
 
-After approval and installation from the Chrome Web Store, the extension will update through the store. Updating does not intentionally clear saved settings.
+After installation from the Chrome Web Store, the extension updates automatically through the store. Updating does not intentionally clear saved settings.
 
 ## Settings backup
 

@@ -41,6 +41,6 @@ See the [complete preview](./preview.md) and [Feature settings](./diy-settings/i
 
 ## Versions and source availability
 
-The Chrome extension has been submitted to the Chrome Web Store and is currently under review. The public repository contains the userscript and project documentation. The Chrome extension is distributed separately and its source code is not published here.
+The Chrome extension is officially available in the Chrome Web Store: [Install GitHub Freshness from the Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj). The public repository contains the source-available userscript and project documentation. The Chrome extension is distributed separately and its source code is not published here.
 
 GitHub Freshness does not track users, display advertising, or upload settings to a server operated by the project author. See the [Privacy Policy](./privacy/) for complete details.

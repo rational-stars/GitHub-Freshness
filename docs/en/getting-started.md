@@ -4,7 +4,9 @@ GitHub Freshness is available as a Chrome extension and a Tampermonkey userscrip
 
 ## Chrome extension
 
-The Chrome extension has been submitted to the Chrome Web Store and is currently under review. The official installation link will be added to this page after approval.
+[Install GitHub Freshness from the Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj).
+
+After installation from the Chrome Web Store, the extension updates automatically through the store.
 
 The extension source is not included in the public repository. Do not install extension files from unofficial sources. See [Chrome extension](./chrome-extension.md) for more information.
 

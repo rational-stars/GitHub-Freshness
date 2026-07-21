@@ -5,7 +5,7 @@
 ### Chrome extension
 
 - Added a Manifest V3 Chrome extension with synchronized settings and toolbar access to the settings panel.
-- The Chrome extension is now distributed separately, has been submitted to the Chrome Web Store, and is currently under review. The public repository no longer includes its source code or local unpacked-install directory.
+- The Chrome extension is now distributed separately, has passed review, and is officially available in the [Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj). The public repository no longer includes its source code or local unpacked-install directory.
 - Fixed storage errors that could occur on stale pages after the extension was reloaded.
 
 ### Page experience

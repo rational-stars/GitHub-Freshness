@@ -4,7 +4,7 @@ Last updated: July 15, 2026
 
 [简体中文](../../privacy/)
 
-GitHub Freshness includes an open-source userscript for GitHub pages and a separately distributed browser extension. It reads repository and file update times visible on the GitHub page the user is currently viewing, then uses color highlighting, date formatting, file sorting, and related features to help users evaluate repository activity. The browser extension source code is not included in the public repository.
+GitHub Freshness includes a source-available userscript for GitHub pages and a separately distributed browser extension. The browser extension is officially available in the [Chrome Web Store](https://chromewebstore.google.com/detail/github-freshness/eelkgplabammohbgakcoehekeefgahoj). It reads repository and file update times visible on the GitHub page the user is currently viewing, then uses color highlighting, date formatting, file sorting, and related features to help users evaluate repository activity. The browser extension source code is not included in the public repository.
 
 We value user privacy. GitHub Freshness does not operate a user account system, display advertising, track user behavior, or sell, rent, or share user data for advertising, profiling, or marketing purposes.
 
